@@ -19,55 +19,66 @@ import { Card, CardContent } from "@/components/ui/card";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 
+interface Thumbnail {
+  key: string;
+  url: string;
+  label: string;
+  size: string;
+  badge: string;
+  available: boolean;
+  note?: string;
+}
+
+interface ThumbnailResult {
+  title?: string;
+  author?: string;
+  videoId: string;
+  thumbnails: Thumbnail[];
+}
+
 export default function YouTubeThumbnailDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [result, setResult] = React.useState(null);
-  const [error, setError] = React.useState(null);
-  const [downloading, setDownloading] = React.useState(null); // key of item being downloaded
-  const [copied, setCopied] = React.useState(null);
+  const [result, setResult] = React.useState<ThumbnailResult | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [downloading, setDownloading] = React.useState<string | null>(null);
+  const [copied, setCopied] = React.useState<string | null>(null);
 
-  const handleFetch = async (e) => {
+  const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
     setLoading(true);
     setResult(null);
     setError(null);
-
     try {
       const res = await fetch("/api/youtube-thumbnail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
       });
-
       const data = await res.json();
       if (!res.ok || data.error)
         throw new Error(data.error || `Server error (${res.status})`);
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDownload = async (thumb) => {
+  const handleDownload = async (thumb: Thumbnail) => {
     if (downloading) return;
     setDownloading(thumb.key);
-
-    const safeTitle = (result.title || "thumbnail")
+    const safeTitle = (result?.title || "thumbnail")
       .replace(/[^a-zA-Z0-9\s_-]/g, "")
       .trim()
       .substring(0, 50);
     const filename = `${safeTitle}-${thumb.key}`;
-
     try {
       const proxyUrl = `/api/thumbnail-proxy?url=${encodeURIComponent(thumb.url)}&filename=${encodeURIComponent(filename)}`;
       const res = await fetch(proxyUrl);
-
       if (!res.ok) {
-        // Direct fallback
         const link = document.createElement("a");
         link.href = thumb.url;
         link.download = `${filename}.jpg`;
@@ -77,7 +88,6 @@ export default function YouTubeThumbnailDownloader() {
         document.body.removeChild(link);
         return;
       }
-
       const blob = await res.blob();
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -88,7 +98,7 @@ export default function YouTubeThumbnailDownloader() {
       document.body.removeChild(link);
       setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
     } catch (err) {
-      setError("Download failed: " + err.message);
+      setError("Download failed: " + (err as Error).message);
     } finally {
       setDownloading(null);
     }
@@ -99,11 +109,11 @@ export default function YouTubeThumbnailDownloader() {
     const available = result.thumbnails.filter((t) => t.available);
     for (const thumb of available) {
       await handleDownload(thumb);
-      await new Promise((r) => setTimeout(r, 500)); // small delay between downloads
+      await new Promise((r) => setTimeout(r, 500));
     }
   };
 
-  const copyUrl = (thumb) => {
+  const copyUrl = (thumb: Thumbnail) => {
     navigator.clipboard.writeText(thumb.url);
     setCopied(thumb.key);
     setTimeout(() => setCopied(null), 2000);
@@ -115,7 +125,7 @@ export default function YouTubeThumbnailDownloader() {
     setError(null);
   };
 
-  const badgeColors = {
+  const badgeColors: Record<string, string> = {
     HD: "bg-red-50 text-red-600",
     SD: "bg-orange-50 text-orange-600",
     HQ: "bg-yellow-50 text-yellow-600",
@@ -126,9 +136,7 @@ export default function YouTubeThumbnailDownloader() {
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-50 font-sans text-zinc-900">
       <Navbar />
-
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -148,7 +156,6 @@ export default function YouTubeThumbnailDownloader() {
               ThumbRip<span className="text-red-600">.</span>
             </h1>
           </div>
-
           <div className="hidden md:flex items-center gap-6 text-zinc-400 border-l border-zinc-200 pl-6">
             <div>
               <p className="text-[10px] font-bold uppercase mb-0.5 tracking-tighter">
@@ -160,7 +167,6 @@ export default function YouTubeThumbnailDownloader() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* LEFT: INPUT */}
           <div className="lg:col-span-4 space-y-6">
             <Card className="border-zinc-200/60 shadow-sm rounded-[24px] bg-white overflow-hidden">
               <CardContent className="p-6 space-y-6">
@@ -172,7 +178,6 @@ export default function YouTubeThumbnailDownloader() {
                     Thumbnail Extractor
                   </span>
                 </div>
-
                 <form onSubmit={handleFetch} className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-2">
@@ -185,7 +190,6 @@ export default function YouTubeThumbnailDownloader() {
                       className="h-12 border-zinc-200 rounded-xl bg-zinc-50/50 font-medium focus-visible:ring-red-500/20 focus-visible:border-red-500/50 transition-all"
                     />
                   </div>
-
                   <Button
                     type="submit"
                     disabled={loading || !url}
@@ -200,7 +204,6 @@ export default function YouTubeThumbnailDownloader() {
                     )}
                   </Button>
                 </form>
-
                 {error && (
                   <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[11px] font-bold uppercase">
                     <AlertCircleIcon className="h-3.5 w-3.5 shrink-0" /> {error}
@@ -209,7 +212,6 @@ export default function YouTubeThumbnailDownloader() {
               </CardContent>
             </Card>
 
-            {/* Info card */}
             <div className="p-4 bg-zinc-900 rounded-2xl text-white space-y-3">
               <div className="flex items-center gap-2 text-red-500">
                 <ZapIcon className="h-3 w-3 fill-current" />
@@ -263,7 +265,6 @@ export default function YouTubeThumbnailDownloader() {
             )}
           </div>
 
-          {/* RIGHT: RESULTS */}
           <div className="lg:col-span-8">
             <Card className="border-zinc-200/60 shadow-xl shadow-zinc-200/20 rounded-[32px] overflow-hidden bg-white min-h-[500px] flex flex-col">
               {!result ? (
@@ -283,7 +284,6 @@ export default function YouTubeThumbnailDownloader() {
                 </div>
               ) : (
                 <div className="p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
-                  {/* Video info */}
                   <div className="flex items-center gap-3 pb-5 border-b border-zinc-100">
                     <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center shrink-0">
                       <YoutubeIcon className="h-4 w-4 text-red-600" />
@@ -306,7 +306,6 @@ export default function YouTubeThumbnailDownloader() {
                     </button>
                   </div>
 
-                  {/* Thumbnail grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {result.thumbnails
                       .filter((t) => t.available)
@@ -315,17 +314,16 @@ export default function YouTubeThumbnailDownloader() {
                           key={thumb.key}
                           className="group rounded-2xl overflow-hidden border border-zinc-100 hover:border-zinc-200 transition-all hover:shadow-md"
                         >
-                          {/* Image preview */}
                           <div className="relative bg-zinc-50 aspect-video overflow-hidden">
                             <img
                               src={thumb.url}
                               alt={thumb.label}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               onError={(e) => {
-                                e.target.src = `https://i.ytimg.com/vi/${result.videoId}/hqdefault.jpg`;
+                                (e.target as HTMLImageElement).src =
+                                  `https://i.ytimg.com/vi/${result.videoId}/hqdefault.jpg`;
                               }}
                             />
-                            {/* Overlay on hover */}
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                               <div className="flex gap-2">
                                 <button
@@ -366,7 +364,6 @@ export default function YouTubeThumbnailDownloader() {
                                 </button>
                               </div>
                             </div>
-                            {/* Badge */}
                             <div className="absolute top-2 left-2">
                               <span
                                 className={`text-[9px] font-black px-2 py-1 rounded-lg uppercase ${badgeColors[thumb.badge] || "bg-zinc-100 text-zinc-500"}`}
@@ -375,8 +372,6 @@ export default function YouTubeThumbnailDownloader() {
                               </span>
                             </div>
                           </div>
-
-                          {/* Card footer */}
                           <div className="p-3 flex items-center justify-between bg-white">
                             <div>
                               <p className="text-[11px] font-bold text-zinc-700">

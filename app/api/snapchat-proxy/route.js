@@ -1,5 +1,4 @@
 // app/api/snapchat-proxy/route.js
-
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const fileUrl = searchParams.get("url");
@@ -14,28 +13,21 @@ export async function GET(req) {
     return new Response("Invalid URL", { status: 400 });
   }
 
-  // Allow Snapchat CDN domains
-  const allowedPatterns = [
+  // Allow all known Snapchat CDN hostnames
+  const allowedHosts = [
+    "sc-cdn.net", // covers bolt-gcdn.sc-cdn.net AND cf-st.sc-cdn.net
     "snapchat.com",
-    "sc-cdn.net",
-    "snap-storage-production.storage.googleapis.com",
-    "cf-st.sc-cdn.net",
+    "snap.com",
+    "snapchat-video.com",
     "snapsave.app",
     "snapsave.io",
   ];
 
-  const isAllowed = allowedPatterns.some((p) => parsedUrl.hostname.endsWith(p));
+  const isAllowed = allowedHosts.some((h) => parsedUrl.hostname.endsWith(h));
   if (!isAllowed) {
-    // Broad allow for any snap CDN subdomain
-    const isSnapCdn =
-      parsedUrl.hostname.includes("snap") ||
-      parsedUrl.hostname.includes("sc-cdn");
-    if (!isSnapCdn) {
-      console.warn("[SnapProxy] Blocked host:", parsedUrl.hostname);
-      return new Response("URL not allowed: " + parsedUrl.hostname, {
-        status: 403,
-      });
-    }
+    return new Response("URL not allowed: " + parsedUrl.hostname, {
+      status: 403,
+    });
   }
 
   try {
@@ -46,38 +38,45 @@ export async function GET(req) {
         Referer: "https://www.snapchat.com/",
         Accept: "*/*",
         "Accept-Encoding": "identity",
+        Origin: "https://www.snapchat.com",
       },
     });
 
-    if (!res.ok) {
-      return new Response(`Upstream error: ${res.status} ${res.statusText}`, {
+    if (!res.ok)
+      return new Response(`Upstream error: ${res.status}`, {
         status: res.status,
       });
-    }
 
     const data = await res.arrayBuffer();
+    if (data.byteLength < 1000)
+      return new Response("File too small", { status: 502 });
 
-    if (data.byteLength < 1000) {
-      return new Response("File too small — likely an error response", {
-        status: 502,
-      });
-    }
+    // Detect content type from response or URL
+    const contentTypeHeader = res.headers.get("content-type") || "";
+    const isImage =
+      contentTypeHeader.startsWith("image/") ||
+      fileUrl.match(/\.(jpg|jpeg|png|webp)/i);
 
-    const upstreamContentType = res.headers.get("Content-Type") || "video/mp4";
+    // bolt-gcdn URLs have no extension — check content-type header
+    const isVideo =
+      contentTypeHeader.startsWith("video/") ||
+      fileUrl.includes("bolt-gcdn") ||
+      fileUrl.includes(".mp4") ||
+      !isImage;
+
+    const contentType = isImage ? "image/jpeg" : "video/mp4";
+    const ext = isImage ? "jpg" : "mp4";
 
     return new Response(data, {
       status: 200,
       headers: {
-        "Content-Type": upstreamContentType.includes("video")
-          ? upstreamContentType
-          : "video/mp4",
-        "Content-Disposition": `attachment; filename="${filename}.mp4"`,
+        "Content-Type": contentType,
+        "Content-Disposition": `attachment; filename="${filename}.${ext}"`,
         "Content-Length": data.byteLength.toString(),
         "Cache-Control": "no-store",
       },
     });
   } catch (err) {
-    console.error("[SnapProxy] Error:", err);
     return new Response("Download failed: " + err.message, { status: 500 });
   }
 }

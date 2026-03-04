@@ -1,24 +1,158 @@
 // app/api/snapchat/route.js
 import { NextResponse } from "next/server";
 
-function extractSnapInfo(url) {
-  // Spotlight: https://www.snapchat.com/spotlight/...
-  // Story: https://www.snapchat.com/add/username
-  // Snap: https://story.snapchat.com/s/...
-  // Short: https://t.snapchat.com/...
+function decodeUrl(str) {
+  if (!str) return "";
+  let s = str;
+  for (let i = 0; i < 3; i++) {
+    s = s
+      .replace(/\\u002F/gi, "/")
+      .replace(/\\u0026/gi, "&")
+      .replace(/\\u003A/gi, ":")
+      .replace(/\\\//g, "/")
+      .replace(/\\"/g, '"')
+      .replace(/&amp;/g, "&");
+  }
+  return s.trim();
+}
 
-  const spotlightMatch = url.match(
-    /snapchat\.com\/spotlight\/([a-zA-Z0-9_-]+)/,
+function extractOgImage(html) {
+  const m =
+    html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/) ||
+    html.match(/<meta\s+content="([^"]+)"\s+property="og:image"/) ||
+    html.match(
+      /href="(https:\/\/cf-st\.sc-cdn\.net\/d\/[^"]+)"[^>]*as="image"/,
+    );
+  return m ? m[1].replace(/&amp;/g, "&") : null;
+}
+
+function extractOgTitle(html) {
+  const captionMatch =
+    html.match(/"caption"\s*:\s*"([^"]{3,100})"/) ||
+    html.match(/"description"\s*:\s*"([^"]{5,100})"/);
+  if (captionMatch) {
+    const caption = decodeUrl(captionMatch[1]).replace(/\\n/g, " ").trim();
+    if (caption.length > 3) return caption;
+  }
+  const m =
+    html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/) ||
+    html.match(/<meta\s+content="([^"]+)"\s+property="og:title"/) ||
+    html.match(/<title>([^<]+)<\/title>/);
+  return m
+    ? m[1]
+        .replace(/&amp;/g, "&")
+        .replace(/ \| Snapchat$/, "")
+        .trim()
+    : "Snapchat Video";
+}
+
+// THE KEY FIX: Snapchat serves video via bolt-gcdn.sc-cdn.net/u/ with NO .mp4 extension
+// and embeds it via <link rel="preload" as="video" href="...">
+function extractSnapVideoUrls(html) {
+  const candidates = new Set();
+
+  // 1. <link rel="preload" as="video" href="..."> — Snapchat's primary video embed method
+  for (const m of html.matchAll(/<link[^>]+as="video"[^>]+href="([^"]+)"/g)) {
+    candidates.add(m[1].replace(/&amp;/g, "&"));
+  }
+  for (const m of html.matchAll(/<link[^>]+href="([^"]+)"[^>]+as="video"/g)) {
+    candidates.add(m[1].replace(/&amp;/g, "&"));
+  }
+
+  // 2. bolt-gcdn.sc-cdn.net/u/ — Snapchat's video streaming CDN (no .mp4 extension)
+  for (const m of html.matchAll(
+    /https?:\/\/bolt-gcdn\.sc-cdn\.net\/u\/[^\s"'<>&\\]+/g,
+  )) {
+    candidates.add(decodeUrl(m[0]));
+  }
+  // Escaped versions in JSON
+  for (const m of html.matchAll(
+    /https?:\\u002F\\u002Fbolt-gcdn\.sc-cdn\.net\\u002Fu\\u002F[^\s"'<>\\]+/gi,
+  )) {
+    candidates.add(decodeUrl(m[0]));
+  }
+
+  // 3. cf-st.sc-cdn.net/v/ — another Snapchat video endpoint
+  for (const m of html.matchAll(
+    /https?:\/\/cf-st\.sc-cdn\.net\/v\/[^\s"'<>&\\]+/g,
+  )) {
+    candidates.add(decodeUrl(m[0]));
+  }
+
+  // 4. og:video meta tag
+  for (const m of html.matchAll(
+    /<meta[^>]+property="og:video(?::url)?"[^>]+content="([^"]+)"/g,
+  )) {
+    candidates.add(m[1].replace(/&amp;/g, "&"));
+  }
+  for (const m of html.matchAll(
+    /<meta[^>]+content="([^"]+)"[^>]+property="og:video(?::url)?"/g,
+  )) {
+    candidates.add(m[1].replace(/&amp;/g, "&"));
+  }
+
+  // 5. Any .mp4 (older Spotlight format)
+  for (const m of html.matchAll(/https?:\/\/[^\s"'<>\\]+\.mp4[^\s"'<>\\]*/g)) {
+    candidates.add(decodeUrl(m[0]));
+  }
+
+  // 6. JSON "url" / "videoUrl" pointing to sc-cdn
+  for (const m of html.matchAll(
+    /"(?:url|videoUrl|video_url|streamingUrl|playbackUrl|src)"\s*:\s*"(https?:\/\/[^"]*sc-cdn\.net[^"]*)"/g,
+  )) {
+    candidates.add(decodeUrl(m[1]));
+  }
+
+  // 7. __NEXT_DATA__ deep scan
+  const nextDataMatch = html.match(
+    /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/,
   );
-  if (spotlightMatch) return { type: "spotlight", id: spotlightMatch[1] };
+  if (nextDataMatch) {
+    try {
+      const str = JSON.stringify(JSON.parse(nextDataMatch[1]));
+      for (const m of str.matchAll(
+        /"(https?:\\?\/\\?\/bolt-gcdn\.sc-cdn\.net[^"]*)"/g,
+      )) {
+        candidates.add(decodeUrl(m[1]));
+      }
+      for (const m of str.matchAll(
+        /"(https?:\\?\/\\?\/[^"]*sc-cdn\.net[^"]*(?:video|stream|\.mp4)[^"]*)"/g,
+      )) {
+        candidates.add(decodeUrl(m[1]));
+      }
+    } catch {}
+  }
 
-  const storyMatch = url.match(/story\.snapchat\.com\/s\/([a-zA-Z0-9_-]+)/);
-  if (storyMatch) return { type: "story", id: storyMatch[1] };
+  // Filter: only valid https from known Snapchat CDNs
+  return [...candidates].filter((u) => {
+    try {
+      const p = new URL(u);
+      return (
+        p.protocol === "https:" &&
+        (p.hostname.includes("sc-cdn.net") ||
+          p.hostname.includes("snapchat.com") ||
+          p.hostname.includes("snap.com") ||
+          u.includes(".mp4"))
+      );
+    } catch {
+      return false;
+    }
+  });
+}
 
-  const shortMatch = url.match(/t\.snapchat\.com\/([a-zA-Z0-9_-]+)/);
-  if (shortMatch) return { type: "short", id: shortMatch[1] };
-
-  return null;
+async function resolveRedirect(url) {
+  try {
+    const res = await fetch(url, {
+      redirect: "follow",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15",
+      },
+    });
+    return res.url;
+  } catch {
+    return url;
+  }
 }
 
 export async function POST(req) {
@@ -31,204 +165,167 @@ export async function POST(req) {
     url = url.trim();
     console.log("[SnapSave] Input URL:", url);
 
-    // Resolve short URLs (t.snapchat.com)
-    if (
-      url.includes("t.snapchat.com") ||
-      !url.includes("snapchat.com/spotlight")
-    ) {
+    // Resolve short links
+    if (url.includes("t.snapchat.com") || url.includes("snapchat.app.link")) {
+      url = await resolveRedirect(url);
+      console.log("[SnapSave] Resolved:", url);
+    }
+
+    // ── STRATEGY A: RapidAPI ──
+    if (process.env.RAPIDAPI_KEY) {
       try {
-        const res = await fetch(url, {
-          redirect: "follow",
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+        console.log("[SnapSave] Trying RapidAPI snapchat-scraper...");
+        const r = await fetch(
+          `https://snapchat-scraper.p.rapidapi.com/v1/spotlight?url=${encodeURIComponent(url)}`,
+          {
+            headers: {
+              "X-RapidAPI-Key": process.env.RAPIDAPI_KEY,
+              "X-RapidAPI-Host": "snapchat-scraper.p.rapidapi.com",
+            },
           },
-        });
-        url = res.url;
-        console.log("[SnapSave] Resolved to:", url);
+        );
+        if (r.ok) {
+          const data = await r.json();
+          const videoUrl =
+            data.video_url || data.videoUrl || data.url || data.download_url;
+          if (videoUrl) {
+            console.log("[SnapSave] ✅ snapchat-scraper success");
+            return NextResponse.json({
+              videoUrl,
+              thumbnail: data.thumbnail || null,
+              title: data.title || data.caption || "Snapchat Video",
+              success: true,
+            });
+          }
+        }
       } catch (e) {
-        console.error("[SnapSave] Redirect failed:", e.message);
+        console.error("[SnapSave] snapchat-scraper failed:", e.message);
+      }
+
+      try {
+        console.log("[SnapSave] Trying RapidAPI SMVD...");
+        const r = await fetch(
+          "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-RapidAPI-Key": process.env.RAPIDAPI_KEY,
+              "X-RapidAPI-Host": "social-media-video-downloader.p.rapidapi.com",
+            },
+            body: JSON.stringify({ url }),
+          },
+        );
+        if (r.ok) {
+          const data = await r.json();
+          if (data.success && data.links?.length > 0) {
+            console.log("[SnapSave] ✅ SMVD success");
+            return NextResponse.json({
+              videoUrl: data.links[0].link,
+              thumbnail: data.picture || null,
+              title: data.title || "Snapchat Video",
+              success: true,
+            });
+          }
+        }
+      } catch (e) {
+        console.error("[SnapSave] SMVD failed:", e.message);
       }
     }
 
-    // ── STRATEGY A: snapchat.com page scrape ──
-    try {
-      console.log("[SnapSave] Fetching Snapchat page...");
-      const pageRes = await fetch(url, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.9",
-        },
-      });
+    // ── STRATEGY B: Direct page scrape (4 User-Agents) ──
+    const uas = [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+      "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)",
+      "Twitterbot/1.0",
+    ];
 
-      const html = await pageRes.text();
-      console.log("[SnapSave] HTML length:", html.length);
-      console.log("[SnapSave] Has video URL:", html.includes(".mp4"));
-
-      // Look for video URLs in page source
-      // Snapchat embeds video URLs in script tags and meta tags
-
-      // Method A1: og:video meta tag
-      const ogVideoMatch =
-        html.match(/<meta\s+property="og:video"\s+content="([^"]+)"/) ||
-        html.match(/<meta\s+content="([^"]+)"\s+property="og:video"/) ||
-        html.match(/<meta\s+property="og:video:url"\s+content="([^"]+)"/);
-
-      if (ogVideoMatch) {
-        const videoUrl = ogVideoMatch[1].replace(/&amp;/g, "&");
-        console.log("[SnapSave] ✅ Found via og:video:", videoUrl);
-
-        const thumbnail = extractOgImage(html);
-        const title = extractOgTitle(html);
-
-        return NextResponse.json({
-          videoUrl,
-          thumbnail,
-          title,
-          success: true,
-          source: "og:video",
+    for (const ua of uas) {
+      try {
+        console.log(`[SnapSave] Scraping: ${ua.substring(0, 40)}...`);
+        const r = await fetch(url, {
+          headers: {
+            "User-Agent": ua,
+            Accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Cache-Control": "no-cache",
+          },
         });
-      }
 
-      // Method A2: Scan for .mp4 CDN URLs in raw HTML
-      const mp4Patterns = [
-        /https:\/\/[a-zA-Z0-9.\-_]+\.snapchat\.com\/[^\s"'<>]+\.mp4[^\s"'<>]*/g,
-        /https:\/\/cf-st\.sc-cdn\.net\/[^\s"'<>]+\.mp4[^\s"'<>]*/g,
-        /https:\/\/[^\s"'<>]+sc-cdn[^\s"'<>]+\.mp4[^\s"'<>]*/g,
-        /https:\/\/[^\s"'<>]*snap[^\s"'<>]*\.mp4[^\s"'<>]*/gi,
-      ];
+        const html = await r.text();
+        console.log(
+          `[SnapSave] HTML: ${html.length} | bolt-gcdn: ${html.includes("bolt-gcdn")} | mp4: ${html.includes(".mp4")}`,
+        );
 
-      for (const pattern of mp4Patterns) {
-        const matches = html.match(pattern);
-        if (matches && matches.length > 0) {
-          const videoUrl = matches[0]
-            .replace(/\\u002F/g, "/")
-            .replace(/\\/g, "")
-            .replace(/&amp;/g, "&");
-          console.log("[SnapSave] ✅ Found via CDN scan:", videoUrl);
+        const videoUrls = extractSnapVideoUrls(html);
+        console.log(
+          `[SnapSave] Found ${videoUrls.length} URLs:`,
+          videoUrls.slice(0, 2).map((u) => u.substring(0, 80)),
+        );
 
+        if (videoUrls.length > 0) {
+          // Prefer bolt-gcdn (actual video) over cf-st (may be thumbnail CDN)
+          const bestUrl =
+            videoUrls.find((u) => u.includes("bolt-gcdn")) || videoUrls[0];
+          console.log(
+            "[SnapSave] ✅ Page scrape success — URL:",
+            bestUrl.substring(0, 80),
+          );
           return NextResponse.json({
-            videoUrl,
+            videoUrl: bestUrl,
             thumbnail: extractOgImage(html),
             title: extractOgTitle(html),
             success: true,
-            source: "cdn_scan",
           });
         }
+      } catch (e) {
+        console.error(`[SnapSave] Scrape failed:`, e.message);
       }
-
-      // Method A3: Look in JSON-LD or __NEXT_DATA__ script tags
-      const nextDataMatch = html.match(
-        /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/,
-      );
-      if (nextDataMatch) {
-        try {
-          const nextData = JSON.parse(nextDataMatch[1]);
-          const str = JSON.stringify(nextData);
-
-          const mp4Match = str.match(/https?:\\?\/\\?\/[^"\\]+\.mp4[^"\\]*/);
-          if (mp4Match) {
-            const videoUrl = mp4Match[0]
-              .replace(/\\\//g, "/")
-              .replace(/\\u002F/g, "/");
-            console.log("[SnapSave] ✅ Found via __NEXT_DATA__:", videoUrl);
-
-            return NextResponse.json({
-              videoUrl,
-              thumbnail: extractOgImage(html),
-              title: extractOgTitle(html),
-              success: true,
-              source: "next_data",
-            });
-          }
-        } catch (e) {
-          console.error("[SnapSave] __NEXT_DATA__ parse failed:", e.message);
-        }
-      }
-
-      // Method A4: Look in any script tag for video data
-      const scriptBlocks =
-        html.match(/<script[^>]*>([\s\S]*?)<\/script>/g) || [];
-      for (const block of scriptBlocks) {
-        if (!block.includes(".mp4") && !block.includes("video")) continue;
-
-        const mp4Match = block.match(
-          /https?:\\?\/\\?\/[^\s"'\\<>]+\.mp4[^\s"'\\<>]*/,
-        );
-        if (mp4Match) {
-          const videoUrl = mp4Match[0]
-            .replace(/\\\//g, "/")
-            .replace(/\\u002F/g, "/")
-            .replace(/\\/g, "");
-          if (videoUrl.startsWith("http")) {
-            console.log("[SnapSave] ✅ Found via script scan:", videoUrl);
-            return NextResponse.json({
-              videoUrl,
-              thumbnail: extractOgImage(html),
-              title: extractOgTitle(html),
-              success: true,
-              source: "script_scan",
-            });
-          }
-        }
-      }
-
-      // Even if no video found, return metadata so UI shows something
-      const thumbnail = extractOgImage(html);
-      const title = extractOgTitle(html);
-      console.log("[SnapSave] No video URL found in HTML. Title:", title);
-    } catch (e) {
-      console.error("[SnapSave] Page scrape failed:", e.message);
     }
 
-    // ── STRATEGY B: snapsave.app API (third-party) ──
+    // ── STRATEGY C: snapsave.app ──
     try {
-      console.log("[SnapSave] Trying snapinsta/snapsave approach...");
-      const formRes = await fetch("https://snapsave.app/", {
+      console.log("[SnapSave] Trying snapsave.app...");
+      const initRes = await fetch("https://snapsave.app/", {
         headers: {
           "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         },
       });
+      const initHtml = await initRes.text();
+      const tok =
+        initHtml.match(/name="_token"\s+value="([^"]+)"/) ||
+        initHtml.match(/name="token"\s+value="([^"]+)"/);
+      const cookies = initRes.headers.get("set-cookie") || "";
 
-      const formHtml = await formRes.text();
-      const tokenMatch = formHtml.match(/name="_token"\s+value="([^"]+)"/);
-      const cookies = formRes.headers.get("set-cookie") || "";
-
-      if (tokenMatch) {
-        const token = tokenMatch[1];
-        const submitRes = await fetch("https://snapsave.app/action.php", {
+      if (tok) {
+        const sub = await fetch("https://snapsave.app/action.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0",
             Referer: "https://snapsave.app/",
             Origin: "https://snapsave.app",
             Cookie: cookies,
+            "X-Requested-With": "XMLHttpRequest",
           },
-          body: new URLSearchParams({ url, _token: token }),
+          body: new URLSearchParams({ url, _token: tok[1] }),
         });
-
-        if (submitRes.ok) {
-          const resultHtml = await submitRes.text();
-          const videoMatch = resultHtml.match(
-            /href="(https:\/\/[^"]+\.mp4[^"]*)"/,
-          );
-          if (videoMatch) {
+        if (sub.ok) {
+          const html = await sub.text();
+          const videoUrls = extractSnapVideoUrls(html);
+          if (videoUrls.length > 0) {
             console.log("[SnapSave] ✅ snapsave.app success");
-            const thumbMatch = resultHtml.match(
+            const thumbMatch = html.match(
               /src="(https:\/\/[^"]+\.(jpg|jpeg|png|webp)[^"]*)"/,
             );
             return NextResponse.json({
-              videoUrl: videoMatch[1].replace(/&amp;/g, "&"),
+              videoUrl: videoUrls[0],
               thumbnail: thumbMatch ? thumbMatch[1] : null,
               title: "Snapchat Video",
               success: true,
-              source: "snapsave",
             });
           }
         }
@@ -237,45 +334,12 @@ export async function POST(req) {
       console.error("[SnapSave] snapsave.app failed:", e.message);
     }
 
-    // ── STRATEGY C: snapsave.io API ──
-    try {
-      console.log("[SnapSave] Trying snapsave.io...");
-      const ssRes = await fetch("https://snapsave.io/action.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-          Referer: "https://snapsave.io/",
-          Origin: "https://snapsave.io",
-        },
-        body: new URLSearchParams({ url }),
-      });
-
-      if (ssRes.ok) {
-        const ssHtml = await ssRes.text();
-        const videoMatch = ssHtml.match(/href="(https:\/\/[^"]+\.mp4[^"]*)"/);
-        if (videoMatch) {
-          console.log("[SnapSave] ✅ snapsave.io success");
-          return NextResponse.json({
-            videoUrl: videoMatch[1].replace(/&amp;/g, "&"),
-            thumbnail: null,
-            title: "Snapchat Video",
-            success: true,
-            source: "snapsave.io",
-          });
-        }
-      }
-    } catch (e) {
-      console.error("[SnapSave] snapsave.io failed:", e.message);
-    }
-
     console.log("[SnapSave] ❌ All strategies failed");
     return NextResponse.json(
       {
         success: false,
         error:
-          "Could not extract video. Make sure the Snapchat link is public (Spotlight or public Story).",
+          "Could not extract video. Make sure the link is a public Spotlight. Add RAPIDAPI_KEY to .env.local for best results.",
       },
       { status: 404 },
     );
@@ -286,21 +350,4 @@ export async function POST(req) {
       { status: 500 },
     );
   }
-}
-
-function extractOgImage(html) {
-  const match =
-    html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/) ||
-    html.match(/<meta\s+content="([^"]+)"\s+property="og:image"/);
-  return match ? match[1].replace(/&amp;/g, "&") : null;
-}
-
-function extractOgTitle(html) {
-  const match =
-    html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/) ||
-    html.match(/<meta\s+content="([^"]+)"\s+property="og:title"/) ||
-    html.match(/<title>([^<]+)<\/title>/);
-  return match
-    ? match[1].replace(/&amp;/g, "&").replace(" | Snapchat", "").trim()
-    : "Snapchat Video";
 }

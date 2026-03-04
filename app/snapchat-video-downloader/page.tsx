@@ -9,6 +9,7 @@ import {
   Link2Icon,
   AlertCircleIcon,
   GhostIcon,
+  PlayIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,10 +24,27 @@ export default function SnapchatDownloader() {
   const [downloading, setDownloading] = React.useState(false);
   const [result, setResult] = React.useState(null);
   const [error, setError] = React.useState(null);
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  // Fixes Hydration issues on Netlify/Next.js
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const isValidSnapLink = (link) => {
+    if (!link) return false;
+    return link.includes("snapchat.com") || link.includes("t.snapchat.com");
+  };
 
   const handleFetch = async (e) => {
     e.preventDefault();
     if (!url) return;
+
+    if (!isValidSnapLink(url)) {
+      setError("Please enter a valid Snapchat URL");
+      return;
+    }
+
     setLoading(true);
     setResult(null);
     setError(null);
@@ -41,16 +59,17 @@ export default function SnapchatDownloader() {
       const data = await res.json();
       if (!res.ok || data.error)
         throw new Error(data.error || `Server error (${res.status})`);
+
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "Failed to fetch data");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDownload = async () => {
-    if (!result?.videoUrl || downloading) return;
+    if (!result?.videoUrl || downloading || !isMounted) return;
     setDownloading(true);
 
     const safeFilename =
@@ -64,11 +83,12 @@ export default function SnapchatDownloader() {
       const res = await fetch(proxyUrl);
 
       if (!res.ok) {
-        // Fallback: direct link
+        // Netlify Fallback: Direct link
         const link = document.createElement("a");
         link.href = result.videoUrl;
         link.download = `${safeFilename}.mp4`;
         link.target = "_blank";
+        link.rel = "noopener noreferrer";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -76,7 +96,7 @@ export default function SnapchatDownloader() {
       }
 
       const blob = await res.blob();
-      if (blob.size < 1000) throw new Error("Downloaded file too small");
+      if (blob.size < 1000) throw new Error("Downloaded file is too small");
 
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -85,9 +105,13 @@ export default function SnapchatDownloader() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
+
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 10000);
     } catch (err) {
-      setError("Download failed: " + err.message);
+      setError(
+        "Download failed: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     } finally {
       setDownloading(false);
     }
@@ -99,28 +123,30 @@ export default function SnapchatDownloader() {
     setError(null);
   };
 
+  // Prevent rendering until client-side mount to avoid Netlify build errors
+  if (!isMounted) return null;
+
   return (
-    <div className="min-h-screen bg-[#fafafa] selection:bg-yellow-50 font-sans text-zinc-900">
+    <div className="min-h-screen bg-[#fafafa] selection:bg-yellow-100 font-sans text-zinc-900">
       <Navbar />
 
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Badge
                 variant="secondary"
-                className="bg-yellow-50 text-yellow-600 border-none text-[10px] font-bold uppercase rounded-full px-3"
+                className="bg-yellow-400 text-zinc-900 border-none text-[10px] font-bold uppercase rounded-full px-3"
               >
-                Snapchat Tool v1.0
+                SnapRip Pro
               </Badge>
               <span className="text-zinc-300">|</span>
               <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                <div className="h-1 w-1 rounded-full bg-yellow-400 animate-pulse" />
+                <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse" />
                 Spotlight & Stories
               </span>
             </div>
-            <h1 className="text-4xl font-black tracking-tight text-zinc-900 italic uppercase">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 italic uppercase">
               SnapRip<span className="text-yellow-400">.</span>
             </h1>
           </div>
@@ -128,23 +154,22 @@ export default function SnapchatDownloader() {
           <div className="hidden md:flex items-center gap-6 text-zinc-400 border-l border-zinc-200 pl-6">
             <div>
               <p className="text-[10px] font-bold uppercase mb-0.5 tracking-tighter">
-                Output
+                Output Format
               </p>
               <p className="text-sm font-bold text-zinc-600">
-                MP4 · HD Quality
+                MP4 · High Quality
               </p>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* LEFT: INPUT */}
           <div className="lg:col-span-4 space-y-6">
             <Card className="border-zinc-200/60 shadow-sm rounded-[24px] bg-white overflow-hidden">
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-center gap-2">
-                  <div className="bg-yellow-50 p-2 rounded-lg">
-                    <GhostIcon className="h-4 w-4 text-yellow-500" />
+                  <div className="bg-yellow-400 p-2 rounded-lg">
+                    <GhostIcon className="h-4 w-4 text-zinc-900" />
                   </div>
                   <span className="font-bold text-[11px] uppercase tracking-wider text-zinc-700">
                     Snap Downloader
@@ -157,23 +182,23 @@ export default function SnapchatDownloader() {
                       <Link2Icon className="h-3 w-3" /> Snapchat URL
                     </label>
                     <Input
-                      placeholder="https://www.snapchat.com/spotlight/..."
+                      placeholder="Paste link here..."
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="h-12 border-zinc-200 rounded-xl bg-zinc-50/50 font-medium focus-visible:ring-yellow-400/30 focus-visible:border-yellow-400/50 transition-all"
+                      className="h-12 border-zinc-200 rounded-xl bg-zinc-50/50 font-medium focus-visible:ring-yellow-400/30 focus-visible:border-yellow-400 transition-all"
                     />
                   </div>
 
                   <Button
                     type="submit"
                     disabled={loading || !url}
-                    className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-zinc-200"
+                    className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg"
                   >
                     {loading ? (
                       <Loader2 className="animate-spin h-4 w-4" />
                     ) : (
                       <span className="flex items-center gap-2">
-                        <DownloadIcon className="h-3.5 w-3.5" /> Get Video
+                        <DownloadIcon className="h-3.5 w-3.5" /> Fetch Video
                       </span>
                     )}
                   </Button>
@@ -188,175 +213,109 @@ export default function SnapchatDownloader() {
               </CardContent>
             </Card>
 
-            {/* Info panel */}
-            <div className="p-4 bg-zinc-900 rounded-2xl text-white space-y-3">
+            <div className="p-5 bg-zinc-900 rounded-[24px] text-white space-y-4 shadow-xl">
               <div className="flex items-center gap-2 text-yellow-400">
-                <ZapIcon className="h-3 w-3 fill-current" />
+                <ZapIcon className="h-3.5 w-3.5 fill-current" />
                 <span className="text-[10px] font-bold uppercase tracking-widest">
-                  Supported Links
+                  Supported Content
                 </span>
               </div>
-              <div className="space-y-2.5">
-                {[
-                  {
-                    label: "Spotlight Videos",
-                    example: "snapchat.com/spotlight/...",
-                  },
-                  {
-                    label: "Public Stories",
-                    example: "story.snapchat.com/s/...",
-                  },
-                  { label: "Short Links", example: "t.snapchat.com/..." },
-                ].map((item) => (
-                  <div key={item.label}>
-                    <p className="text-white text-[11px] font-bold">
-                      {item.label}
-                    </p>
-                    <p className="text-zinc-500 text-[10px] font-mono truncate">
-                      {item.example}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="pt-2 border-t border-zinc-800">
-                <p className="text-zinc-500 text-[10px] leading-relaxed">
-                  ⚠️ Only{" "}
-                  <span className="text-yellow-400 font-bold">public</span>{" "}
-                  Snaps can be downloaded. Private or friend-only content is not
-                  accessible.
+              <div className="space-y-3 text-zinc-400 text-[10px] font-mono">
+                <p>
+                  <span className="text-white font-sans font-bold block mb-1">
+                    Spotlight
+                  </span>{" "}
+                  snapchat.com/spotlight/...
+                </p>
+                <p>
+                  <span className="text-white font-sans font-bold block mb-1">
+                    Stories
+                  </span>{" "}
+                  story.snapchat.com/s/...
                 </p>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: RESULT */}
           <div className="lg:col-span-8">
-            <Card className="border-zinc-200/60 shadow-xl shadow-zinc-200/20 rounded-[32px] overflow-hidden bg-white min-h-[480px] flex flex-col">
+            <Card className="border-zinc-200/60 shadow-xl shadow-zinc-200/20 rounded-[32px] overflow-hidden bg-white min-h-[520px] flex flex-col transition-all">
               {!result ? (
-                <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4">
-                  {/* Snapchat ghost icon */}
+                <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-5">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-3xl bg-yellow-50 flex items-center justify-center rotate-6 border border-yellow-100">
-                      <GhostIcon className="h-10 w-10 text-yellow-300" />
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                      <DownloadIcon className="h-3 w-3 text-white" />
+                    <div className="w-24 h-24 rounded-3xl bg-yellow-50 flex items-center justify-center rotate-3 border border-yellow-100">
+                      <GhostIcon className="h-12 w-12 text-yellow-300" />
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-black text-zinc-300 uppercase tracking-[0.2em]">
-                      Awaiting Snap Link
-                    </p>
-                    <p className="text-zinc-400 text-xs max-w-[220px] leading-relaxed lowercase italic">
-                      Paste a Snapchat Spotlight or public story link to
-                      download the video.
-                    </p>
-                  </div>
+                  <p className="text-zinc-400 text-sm italic">
+                    Paste a public link to start.
+                  </p>
                 </div>
               ) : (
-                <div className="p-8 md:p-10 space-y-8 animate-in fade-in zoom-in-95 duration-300">
-                  {/* Video preview + info */}
-                  <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-                    {/* Thumbnail / video preview */}
+                <div className="p-8 md:p-12 space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                  <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
                     <div className="relative group shrink-0">
-                      {result.thumbnail ? (
-                        <>
-                          <div className="absolute -inset-1 bg-gradient-to-tr from-yellow-400 to-yellow-200 rounded-[24px] blur opacity-30 group-hover:opacity-50 transition duration-500" />
-                          <img
-                            src={result.thumbnail}
-                            alt="Snap thumbnail"
-                            className="relative w-44 h-72 object-cover rounded-[20px] shadow-2xl border-4 border-white"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                            }}
-                          />
-                          {/* Play overlay */}
-                          <div className="absolute inset-0 rounded-[20px] flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-all">
-                            <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                              <svg
-                                viewBox="0 0 24 24"
-                                className="w-5 h-5 fill-zinc-900 ml-1"
-                              >
-                                <path d="M8 5v14l11-7z" />
-                              </svg>
-                            </div>
-                          </div>
-                        </>
+                      <div className="absolute -inset-2 bg-yellow-400/20 rounded-[28px] blur-md" />
+                      {result?.thumbnail ? (
+                        <img
+                          src={result.thumbnail}
+                          alt="Preview"
+                          className="relative w-48 h-80 object-cover rounded-[24px] shadow-2xl border-4 border-white"
+                        />
                       ) : (
-                        <div className="w-44 h-72 rounded-[20px] bg-zinc-100 border-4 border-white shadow-2xl flex items-center justify-center">
-                          <GhostIcon className="h-16 w-16 text-zinc-200" />
+                        <div className="w-48 h-80 rounded-[24px] bg-zinc-100 flex items-center justify-center border-4 border-white shadow-2xl">
+                          <GhostIcon className="h-20 w-20 text-zinc-200" />
                         </div>
                       )}
                     </div>
 
-                    {/* Info + download */}
-                    <div className="flex-1 space-y-6 text-center md:text-left">
-                      <div className="space-y-2">
-                        <Badge className="bg-green-50 text-green-600 hover:bg-green-50 border-none text-[10px] uppercase font-bold px-3">
-                          ✓ Video Found
+                    <div className="flex-1 space-y-6 text-center md:text-left py-2">
+                      <div className="space-y-3">
+                        <Badge className="bg-green-100 text-green-700 uppercase font-black px-3 py-1">
+                          Ready to download
                         </Badge>
-                        <h3 className="text-2xl font-black text-zinc-900 uppercase italic leading-tight">
-                          {result.title || "Snapchat Video"}
+                        <h3 className="text-3xl font-black text-zinc-900 uppercase italic tracking-tight">
+                          {result?.title || "Snapchat Video"}
                         </h3>
-                        <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-yellow-50 text-yellow-600 uppercase">
-                            🎬 MP4
-                          </span>
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-zinc-100 text-zinc-500 uppercase">
-                            HD Quality
-                          </span>
-                          {result.source && (
-                            <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-zinc-100 text-zinc-400 uppercase">
-                              via {result.source}
-                            </span>
-                          )}
-                        </div>
                       </div>
 
-                      {/* Stats grid */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-zinc-50 p-3 rounded-xl border border-zinc-100">
-                          <p className="text-[9px] font-bold text-zinc-400 uppercase mb-1">
-                            Format
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-zinc-50/80 p-4 rounded-2xl border border-zinc-100 text-center">
+                          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                            Type
                           </p>
-                          <p className="text-xs font-bold text-zinc-700">
-                            MP4 Video
+                          <p className="text-sm font-black text-zinc-800 uppercase italic">
+                            MP4
                           </p>
                         </div>
-                        <div className="bg-zinc-50 p-3 rounded-xl border border-zinc-100">
-                          <p className="text-[9px] font-bold text-zinc-400 uppercase mb-1">
-                            Status
+                        <div className="bg-zinc-50/80 p-4 rounded-2xl border border-zinc-100 text-center">
+                          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">
+                            Quality
                           </p>
-                          <p className="text-xs font-bold text-green-600">
-                            Ready
+                          <p className="text-sm font-black text-green-600 uppercase italic">
+                            HD
                           </p>
                         </div>
                       </div>
 
-                      {/* Buttons */}
-                      <div className="space-y-3 pt-2">
+                      <div className="space-y-4 pt-4">
                         <Button
                           onClick={handleDownload}
                           disabled={downloading}
-                          className="w-full h-14 bg-yellow-400 hover:bg-yellow-500 text-zinc-900 rounded-2xl font-black uppercase text-xs tracking-widest transition-all flex items-center justify-center gap-3 shadow-lg shadow-yellow-100"
+                          className="w-full h-16 bg-yellow-400 hover:bg-yellow-500 text-zinc-900 rounded-[20px] font-black uppercase text-sm shadow-xl shadow-yellow-100 transition-transform active:scale-95"
                         >
                           {downloading ? (
-                            <Loader2 className="animate-spin h-4 w-4" />
+                            <Loader2 className="animate-spin h-5 w-5" />
                           ) : (
-                            <>
-                              <DownloadIcon className="h-4 w-4" />
-                              Download Video
-                            </>
+                            "Download Video"
                           )}
                         </Button>
-
                         <Button
                           variant="ghost"
                           onClick={reset}
-                          className="w-full text-zinc-400 hover:text-zinc-700 font-bold uppercase text-[10px] tracking-tighter"
+                          className="w-full text-zinc-400 hover:text-zinc-900 font-bold uppercase text-[10px]"
                         >
-                          <RotateCcwIcon className="mr-2 h-3 w-3" /> Download
-                          Another
+                          <RotateCcwIcon className="mr-2 h-3.5 w-3.5" /> Start
+                          Fresh
                         </Button>
                       </div>
                     </div>

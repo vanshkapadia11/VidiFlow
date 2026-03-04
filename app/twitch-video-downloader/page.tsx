@@ -16,14 +16,33 @@ import { Card, CardContent } from "@/components/ui/card";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 
+interface TwitchFormat {
+  url: string;
+  quality: string;
+  label?: string;
+  isM3u8?: boolean;
+}
+
+interface TwitchResult {
+  title?: string;
+  thumbnail?: string;
+  broadcaster?: string;
+  game?: string;
+  duration: number;
+  views: number;
+  type: "clip" | "vod";
+  isM3u8?: boolean;
+  formats: TwitchFormat[];
+}
+
 export default function TwitchDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [downloading, setDownloading] = React.useState(null);
-  const [result, setResult] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [downloading, setDownloading] = React.useState<string | null>(null);
+  const [result, setResult] = React.useState<TwitchResult | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const handleFetch = async (e) => {
+  const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
     setLoading(true);
@@ -40,31 +59,27 @@ export default function TwitchDownloader() {
         throw new Error(data.error || `Server error (${res.status})`);
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDownload = async (fmt) => {
+  const handleDownload = async (fmt: TwitchFormat) => {
     if (downloading) return;
     setDownloading(fmt.quality);
     const safeFilename =
-      (result.title || "twitch")
+      (result?.title || "twitch")
         .replace(/[^a-zA-Z0-9\s_-]/g, "")
         .trim()
         .substring(0, 60) || "TwitchSave";
-
     try {
-      // For M3U8 streams, open directly in new tab (browser handles HLS)
       if (fmt.isM3u8) {
         window.open(fmt.url, "_blank");
         return;
       }
-
       const proxyUrl = `/api/twitch-proxy?url=${encodeURIComponent(fmt.url)}&filename=${encodeURIComponent(safeFilename)}`;
       const res = await fetch(proxyUrl);
-
       if (!res.ok) {
         const link = document.createElement("a");
         link.href = fmt.url;
@@ -75,7 +90,6 @@ export default function TwitchDownloader() {
         document.body.removeChild(link);
         return;
       }
-
       const blob = await res.blob();
       if (blob.size < 1000) throw new Error("File too small");
       const blobUrl = window.URL.createObjectURL(blob);
@@ -87,13 +101,13 @@ export default function TwitchDownloader() {
       document.body.removeChild(link);
       setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
     } catch (err) {
-      setError("Download failed: " + err.message);
+      setError("Download failed: " + (err as Error).message);
     } finally {
       setDownloading(null);
     }
   };
 
-  const formatDuration = (s) => {
+  const formatDuration = (s: number) => {
     if (!s) return "";
     const h = Math.floor(s / 3600),
       m = Math.floor((s % 3600) / 60),
@@ -113,7 +127,6 @@ export default function TwitchDownloader() {
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -143,7 +156,6 @@ export default function TwitchDownloader() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* LEFT */}
           <div className="lg:col-span-4 space-y-6">
             <Card className="border-zinc-200/60 shadow-sm rounded-[24px] bg-white">
               <CardContent className="p-6 space-y-6">
@@ -190,7 +202,6 @@ export default function TwitchDownloader() {
               </CardContent>
             </Card>
 
-            {/* Info */}
             <div className="p-4 bg-zinc-900 rounded-2xl text-white space-y-3">
               <div className="flex items-center gap-2 text-purple-400">
                 <ZapIcon className="h-3 w-3 fill-current" />
@@ -224,7 +235,6 @@ export default function TwitchDownloader() {
             </div>
           </div>
 
-          {/* RIGHT */}
           <div className="lg:col-span-8">
             <Card className="border-zinc-200/60 shadow-xl shadow-zinc-200/20 rounded-[32px] overflow-hidden bg-white min-h-[480px] flex flex-col">
               {!result ? (
@@ -249,7 +259,6 @@ export default function TwitchDownloader() {
               ) : (
                 <div className="p-8 md:p-10 space-y-8 animate-in fade-in zoom-in-95 duration-300">
                   <div className="flex flex-col md:flex-row gap-8 items-start">
-                    {/* Thumbnail */}
                     <div className="relative group shrink-0">
                       {result.thumbnail ? (
                         <>
@@ -259,7 +268,8 @@ export default function TwitchDownloader() {
                             alt="thumbnail"
                             className="relative w-48 h-28 object-cover rounded-[20px] shadow-2xl border-4 border-white"
                             onError={(e) => {
-                              e.target.style.display = "none";
+                              (e.target as HTMLImageElement).style.display =
+                                "none";
                             }}
                           />
                           <div className="absolute inset-0 rounded-[20px] flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-all">
@@ -280,8 +290,7 @@ export default function TwitchDownloader() {
                       )}
                     </div>
 
-                    {/* Info + download */}
-                    <div className="flex-1 space-y-5 text-center md:text-left">
+                    <div className="flex-1 space-y-5">
                       <div className="space-y-2">
                         <Badge className="bg-green-50 text-green-600 hover:bg-green-50 border-none text-[10px] uppercase font-bold px-3">
                           ✓ {result.type === "clip" ? "Clip" : "VOD"} Found
@@ -313,7 +322,6 @@ export default function TwitchDownloader() {
                         </div>
                       </div>
 
-                      {/* Quality buttons */}
                       <div className="space-y-2">
                         <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                           {result.isM3u8

@@ -15,14 +15,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 
+interface TwitterFormat {
+  url: string;
+  quality: string;
+  label?: string;
+}
+
+interface TwitterResult {
+  title?: string;
+  author?: string;
+  thumbnail?: string;
+  formats: TwitterFormat[];
+}
+
 export default function TwitterDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [downloading, setDownloading] = React.useState(null);
-  const [result, setResult] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [downloading, setDownloading] = React.useState<string | null>(null);
+  const [result, setResult] = React.useState<TwitterResult | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const handleFetch = async (e) => {
+  const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
     setLoading(true);
@@ -39,17 +52,17 @@ export default function TwitterDownloader() {
         throw new Error(data.error || `Server error (${res.status})`);
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDownload = async (fmt) => {
+  const handleDownload = async (fmt: TwitterFormat) => {
     if (downloading) return;
     setDownloading(fmt.quality);
     const safeFilename =
-      (result.title || "xvideo")
+      (result?.title || "xvideo")
         .replace(/[^a-zA-Z0-9\s_-]/g, "")
         .trim()
         .substring(0, 60) || "XSave";
@@ -76,7 +89,7 @@ export default function TwitterDownloader() {
       document.body.removeChild(link);
       setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
     } catch (err) {
-      setError("Download failed: " + err.message);
+      setError("Download failed: " + (err as Error).message);
     } finally {
       setDownloading(null);
     }
@@ -261,7 +274,6 @@ export default function TwitterDownloader() {
                         )}
                       </div>
 
-                      {/* Quality options */}
                       <div className="space-y-2">
                         <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                           Available Qualities
