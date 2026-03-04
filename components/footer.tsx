@@ -166,7 +166,7 @@ export default function CreatorFooter() {
                 <TvIcon className="h-3.5 w-3.5 text-purple-600" /> Twitch DL
               </Link>
               <Link
-                href="/linkedin-downloader"
+                href="/linkedin-video-downloader"
                 className="flex items-center gap-2 hover:text-blue-700 transition-colors"
               >
                 <BriefcaseIcon className="h-3.5 w-3.5 text-blue-700" /> LinkedIn

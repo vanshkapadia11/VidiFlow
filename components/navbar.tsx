@@ -138,7 +138,7 @@ const navLinks = [
   {
     group: "Downloaders",
     name: "LinkedIn DL",
-    href: "/linkedin-downloader",
+    href: "/linkedin-video-downloader",
     icon: BriefcaseIcon,
     color: "text-blue-700",
     bg: "bg-blue-50",

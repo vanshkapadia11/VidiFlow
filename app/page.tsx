@@ -111,9 +111,9 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-6xl md:text-8xl font-[1000] tracking-tighter uppercase italic leading-[0.9]">
-              Create <span className="text-zinc-300">Fast.</span>
+              Create <span className="text-red-700">Fast.</span>
               <br />
-              Download <span className="text-red-600 font-black">Faster.</span>
+              Download <span className="text-red-700 font-black">Faster.</span>
             </h1>
 
             <p className="max-w-xl mx-auto text-zinc-500 font-medium text-lg">
@@ -122,12 +122,14 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                size="lg"
-                className="h-14 px-8 bg-zinc-900 text-white rounded-2xl font-bold uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-xl shadow-zinc-200"
-              >
-                Explore All Tools <ArrowRightIcon className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="/explore-tools" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="h-14 px-8 bg-zinc-900 text-white rounded-2xl font-bold uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-xl shadow-zinc-200"
+                >
+                  Explore All Tools <ArrowRightIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100">
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-[10px] font-black text-green-700 uppercase">
