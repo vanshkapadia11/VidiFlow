@@ -9,7 +9,6 @@ import {
   Link2Icon,
   AlertCircleIcon,
   GhostIcon,
-  PlayIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,25 +17,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 
+interface SnapResult {
+  videoUrl: string;
+  thumbnail?: string;
+  title?: string;
+}
+
 export default function SnapchatDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [downloading, setDownloading] = React.useState(false);
-  const [result, setResult] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [result, setResult] = React.useState<SnapResult | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
 
-  // Fixes Hydration issues on Netlify/Next.js
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const isValidSnapLink = (link) => {
+  const isValidSnapLink = (link: string) => {
     if (!link) return false;
     return link.includes("snapchat.com") || link.includes("t.snapchat.com");
   };
 
-  const handleFetch = async (e) => {
+  const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
 
@@ -83,7 +87,6 @@ export default function SnapchatDownloader() {
       const res = await fetch(proxyUrl);
 
       if (!res.ok) {
-        // Netlify Fallback: Direct link
         const link = document.createElement("a");
         link.href = result.videoUrl;
         link.download = `${safeFilename}.mp4`;
@@ -123,7 +126,6 @@ export default function SnapchatDownloader() {
     setError(null);
   };
 
-  // Prevent rendering until client-side mount to avoid Netlify build errors
   if (!isMounted) return null;
 
   return (
@@ -224,13 +226,13 @@ export default function SnapchatDownloader() {
                 <p>
                   <span className="text-white font-sans font-bold block mb-1">
                     Spotlight
-                  </span>{" "}
+                  </span>
                   snapchat.com/spotlight/...
                 </p>
                 <p>
                   <span className="text-white font-sans font-bold block mb-1">
                     Stories
-                  </span>{" "}
+                  </span>
                   story.snapchat.com/s/...
                 </p>
               </div>
@@ -255,7 +257,7 @@ export default function SnapchatDownloader() {
                   <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
                     <div className="relative group shrink-0">
                       <div className="absolute -inset-2 bg-yellow-400/20 rounded-[28px] blur-md" />
-                      {result?.thumbnail ? (
+                      {result.thumbnail ? (
                         <img
                           src={result.thumbnail}
                           alt="Preview"
@@ -274,7 +276,7 @@ export default function SnapchatDownloader() {
                           Ready to download
                         </Badge>
                         <h3 className="text-3xl font-black text-zinc-900 uppercase italic tracking-tight">
-                          {result?.title || "Snapchat Video"}
+                          {result.title || "Snapchat Video"}
                         </h3>
                       </div>
 
