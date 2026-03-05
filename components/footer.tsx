@@ -50,7 +50,7 @@ export default function CreatorFooter() {
         </div>
 
         {/* MIDDLE SECTION: LINKS GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-12 py-16">
           {/* Creator Tools */}
           <div className="space-y-6">
             <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
@@ -172,43 +172,6 @@ export default function CreatorFooter() {
                 <BriefcaseIcon className="h-3.5 w-3.5 text-blue-700" /> LinkedIn
                 DL
               </Link>
-            </div>
-          </div>
-
-          {/* Support & Connect */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
-                Support
-              </h5>
-              <Link
-                href="mailto:vanshkapadia11@gmail.com"
-                className="flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
-              >
-                <MailIcon className="h-4 w-4" />
-                <span className="lowercase">vanshkapadia11@gmail.com</span>
-              </Link>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-100 rounded-xl w-fit">
-                <CircleIcon className="h-2 w-2 fill-green-500 text-green-500 animate-pulse" />
-                <span className="text-[10px] font-black text-green-700 uppercase tracking-tight">
-                  Status: Optimal
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
-                Socials
-              </h5>
-              <div className="flex items-center gap-3">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="rounded-2xl border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 h-11 w-11 shadow-sm transition-all"
-                >
-                  <GithubIcon className="h-4.5 w-4.5" />
-                </Button>
-              </div>
             </div>
           </div>
         </div>
