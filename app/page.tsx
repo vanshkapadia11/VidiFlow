@@ -253,8 +253,8 @@ export default function HomePage() {
             </div>
 
             <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-[40px] border border-zinc-700 flex items-center justify-center p-12 overflow-hidden group">
-                <div className="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="aspect-square bg-linear-to-br from-zinc-800 to-zinc-900 rounded-[40px] border border-zinc-700 flex items-center justify-center p-12 overflow-hidden group">
+                {/* <div className="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 transition-opacity" /> */}
                 <div className="relative z-10 text-center space-y-4">
                   <div className="w-20 h-20 bg-red-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-red-900 rotate-6 group-hover:rotate-12 transition-transform duration-500">
                     <PlayIcon className="h-10 w-10 text-white fill-white" />
