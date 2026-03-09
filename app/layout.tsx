@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const rootMetadata = {
+// Change 'rootMetadata' to 'metadata' so Next.js can find it
+export const metadata: Metadata = {
   metadataBase: new URL("https://vidiflow.co"),
   title: {
     default:
@@ -41,12 +42,27 @@ export const rootMetadata = {
   ],
   authors: [{ name: "VidiFlow" }],
   creator: "VidiFlow",
+
+  // Add this part for your logo/favicon
+  icons: {
+    icon: "/icon.png", // Place your logo in the /public folder
+    shortcut: "/icon.png",
+    apple: "/apple-touch-icon.png", // Recommended for iPhone bookmarks
+  },
+
   openGraph: {
     title: "VidiFlow — Free Video Downloader",
     description:
       "Download videos from TikTok, YouTube, Instagram, Facebook and more. Free, fast, no watermark.",
     url: "https://vidiflow.co",
     siteName: "VidiFlow",
+    images: [
+      {
+        url: "/og-image.png", // The preview image when sharing on social media
+        width: 1200,
+        height: 630,
+      },
+    ],
     type: "website",
     locale: "en_US",
   },
@@ -55,6 +71,7 @@ export const rootMetadata = {
     title: "VidiFlow — Free Video Downloader",
     description:
       "Download videos from TikTok, YouTube, Instagram, Facebook and more. Free, fast, no watermark.",
+    images: ["/og-image.png"],
     site: "@vidiflow",
   },
   robots: {
@@ -63,7 +80,6 @@ export const rootMetadata = {
     googleBot: { index: true, follow: true },
   },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
