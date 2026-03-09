@@ -91,6 +91,27 @@ const toolCategories = [
   },
 ];
 
+export const homepageMetadata = {
+  title:
+    "VidiFlow — Free Video Downloader for TikTok, YouTube, Instagram & More",
+  description:
+    "VidiFlow lets you download videos from TikTok, YouTube, Instagram, Facebook, Pinterest, Snapchat, Twitter, LinkedIn and Twitch for free. No watermark, no app, no signup. Works on iPhone, Android and PC.",
+  keywords: [
+    "free video downloader",
+    "online video downloader",
+    "download videos online",
+    "video downloader no watermark",
+    "vidiflow",
+  ],
+  openGraph: {
+    title: "VidiFlow — Free Video Downloader",
+    description:
+      "Download videos from any platform free. TikTok, YouTube, Instagram, Facebook and more.",
+    url: "https://vidiflow.co",
+  },
+};
+
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">

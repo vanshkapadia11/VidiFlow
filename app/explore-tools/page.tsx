@@ -121,6 +121,26 @@ const allFeatures = [
     color: "bg-purple-50",
   },
 ];
+export const toolsMetadata = {
+  title: "All Video Downloaders — Every Tool in One Place | VidiFlow",
+  description:
+    "Browse all free video downloader tools on VidiFlow. Download from TikTok, YouTube, Instagram, Facebook, Pinterest, Snapchat, Twitter, LinkedIn and Twitch. All tools free, no app needed.",
+  keywords: [
+    "all video downloaders",
+    "free online tools",
+    "video downloader tools",
+    "social media downloader",
+    "download videos online free",
+    "vidiflow tools",
+  ],
+  openGraph: {
+    title: "All Video Downloaders — VidiFlow",
+    description:
+      "Every free video downloader in one place. TikTok, YouTube, Instagram, Facebook and more.",
+    url: "https://vidiflow.co/tools",
+  },
+};
+
 
 export default function ExploreFeatures() {
   const [search, setSearch] = React.useState("");

@@ -16,10 +16,52 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "VidiFlow - Premium Creator Suite",
+export const rootMetadata = {
+  metadataBase: new URL("https://vidiflow.co"),
+  title: {
+    default:
+      "VidiFlow — Free Video Downloader for TikTok, YouTube, Instagram & More",
+    template: "%s | VidiFlow",
+  },
   description:
-    "VidiFlow is a powerful suite of tools designed to help content creators optimize their YouTube channels. With features like Tag Master and Desc Grabber, VidiFlow makes it easy to generate effective tags and descriptions for your videos, helping you reach a wider audience and grow your channel faster.",
+    "VidiFlow is a free online video downloader. Download videos from TikTok, YouTube, Instagram, Facebook, Pinterest, Snapchat, Twitter, LinkedIn and Twitch instantly. No app, no signup needed.",
+  keywords: [
+    "video downloader",
+    "free video downloader",
+    "online video downloader",
+    "tiktok downloader",
+    "youtube downloader",
+    "instagram downloader",
+    "facebook video downloader",
+    "pinterest downloader",
+    "snapchat downloader",
+    "twitter video downloader",
+    "linkedin video downloader",
+    "twitch downloader",
+  ],
+  authors: [{ name: "VidiFlow" }],
+  creator: "VidiFlow",
+  openGraph: {
+    title: "VidiFlow — Free Video Downloader",
+    description:
+      "Download videos from TikTok, YouTube, Instagram, Facebook and more. Free, fast, no watermark.",
+    url: "https://vidiflow.co",
+    siteName: "VidiFlow",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VidiFlow — Free Video Downloader",
+    description:
+      "Download videos from TikTok, YouTube, Instagram, Facebook and more. Free, fast, no watermark.",
+    site: "@vidiflow",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({
