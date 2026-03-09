@@ -17,6 +17,7 @@ import {
   TvIcon,
   BriefcaseIcon,
   MenuIcon,
+  BookOpenIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -148,7 +149,6 @@ const navLinks = [
 
 const desktopPrimary = [
   "Tag Master",
-  "Desc Grabber",
   "YT Audio",
   "YT Video",
   "TikTok DL",
@@ -234,7 +234,21 @@ const Navbar = () => {
                   </Link>
                 ))}
 
-              {/* ── MORE DROPDOWN ── */}
+              {/* ✅ BLOG LINK */}
+              <Link
+                href="/blog"
+                className={cn(
+                  "relative px-3 py-2 text-[11px] font-bold rounded-xl flex items-center gap-1.5 uppercase transition-all whitespace-nowrap",
+                  pathname === "/blog" || pathname.startsWith("/blog/")
+                    ? "bg-zinc-100 text-zinc-900"
+                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50",
+                )}
+              >
+                <BookOpenIcon className="h-3.5 w-3.5 text-green-600" />
+                Blog
+              </Link>
+
+              {/* MORE DROPDOWN */}
               <div className="relative" ref={moreRef}>
                 <button
                   onClick={() => setShowMore((v) => !v)}
@@ -371,6 +385,46 @@ const Navbar = () => {
 
           {/* Scrollable grouped links */}
           <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-5">
+            {/* ✅ BLOG LINK IN MOBILE */}
+            <div>
+              <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.25em] mb-2 px-1">
+                Resources
+              </p>
+              <Link
+                href="/blog"
+                className={cn(
+                  "flex items-center justify-between p-3.5 rounded-2xl transition-all active:scale-95",
+                  pathname === "/blog" || pathname.startsWith("/blog/")
+                    ? "bg-zinc-900 text-white"
+                    : "bg-zinc-50 text-zinc-700",
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn(
+                      "p-2 rounded-xl shadow-sm",
+                      pathname === "/blog" || pathname.startsWith("/blog/")
+                        ? "bg-white/10"
+                        : "bg-white",
+                    )}
+                  >
+                    <BookOpenIcon
+                      className={cn(
+                        "h-4 w-4",
+                        pathname === "/blog" || pathname.startsWith("/blog/")
+                          ? "text-white"
+                          : "text-green-600",
+                      )}
+                    />
+                  </div>
+                  <span className="font-bold uppercase text-xs tracking-tight">
+                    Blog
+                  </span>
+                </div>
+                <ChevronRightIcon className="h-4 w-4 opacity-40 shrink-0" />
+              </Link>
+            </div>
+
             {groups.map((group) => (
               <div key={group}>
                 <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.25em] mb-2 px-1">

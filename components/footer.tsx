@@ -3,13 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  TwitterIcon,
-  GithubIcon,
   HeartIcon,
-  MailIcon,
-  CircleIcon,
-  ZapIcon,
   SparklesIcon,
+  ZapIcon,
   FileTextIcon,
   MusicIcon,
   VideoIcon,
@@ -18,8 +14,8 @@ import {
   DownloadIcon,
   TvIcon,
   BriefcaseIcon,
+  BookOpenIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const ComingSoonBadge = () => (
   <span className="ml-1.5 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 leading-none">
@@ -31,13 +27,12 @@ export default function CreatorFooter() {
   return (
     <footer className="w-full bg-white border-t border-zinc-100 mt-20">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        {/* TOP SECTION: BOLD BRANDING CENTERED */}
+        {/* TOP — BRANDING */}
         <div className="flex flex-col items-center justify-center text-center pb-16 border-b border-zinc-100">
           <Link href="/" className="flex flex-col items-center gap-2 group">
             <div className="bg-red-600 p-3 rounded-2xl shadow-xl shadow-red-100 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
               <SparklesIcon className="text-white h-7 w-7 fill-white/20" />
             </div>
-
             <div className="flex flex-center mt-2">
               <span className="text-5xl font-[1000] tracking-tighter text-zinc-900 uppercase italic">
                 Vidi<span className="text-red-600">Flow</span>
@@ -49,8 +44,8 @@ export default function CreatorFooter() {
           </Link>
         </div>
 
-        {/* MIDDLE SECTION: LINKS GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-12 py-16">
+        {/* MIDDLE — LINKS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-16">
           {/* Creator Tools */}
           <div className="space-y-6">
             <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
@@ -74,10 +69,20 @@ export default function CreatorFooter() {
                   Grabber
                 </Link>
               </li>
+              {/* ✅ BLOG IN FOOTER */}
+              <li>
+                <Link
+                  href="/blog"
+                  className="flex items-center gap-2 hover:text-green-600 transition-colors"
+                >
+                  <BookOpenIcon className="h-3.5 w-3.5 text-green-600" /> Blog &
+                  Guides
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* YouTube Section */}
+          {/* YouTube */}
           <div className="space-y-6">
             <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
               YouTube
@@ -113,12 +118,12 @@ export default function CreatorFooter() {
             </ul>
           </div>
 
-          {/* Downloaders Grid (Expanded) */}
-          <div className="space-y-6 col-span-1">
+          {/* Downloaders col 1 */}
+          <div className="space-y-6">
             <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
               Downloaders
             </h5>
-            <div className="grid grid-cols-1 gap-3 text-sm font-bold text-zinc-500">
+            <div className="space-y-3 text-sm font-bold text-zinc-500">
               <Link
                 href="/tiktok-video-downloader"
                 className="flex items-center gap-2 hover:text-zinc-900 transition-colors"
@@ -145,6 +150,15 @@ export default function CreatorFooter() {
               >
                 <VideoIcon className="h-3.5 w-3.5 text-blue-600" /> Facebook DL
               </Link>
+            </div>
+          </div>
+
+          {/* Downloaders col 2 */}
+          <div className="space-y-6">
+            <h5 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.2em]">
+              More Tools
+            </h5>
+            <div className="space-y-3 text-sm font-bold text-zinc-500">
               <Link
                 href="/snapchat-video-downloader"
                 className="flex items-center gap-2 hover:text-yellow-500 transition-colors"
@@ -176,7 +190,7 @@ export default function CreatorFooter() {
           </div>
         </div>
 
-        {/* BOTTOM SECTION */}
+        {/* BOTTOM */}
         <div className="pt-8 border-t border-zinc-100 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[11px] text-zinc-400 font-black uppercase tracking-[0.25em]">
             © 2026 VIDIFLOW. ALL RIGHTS RESERVED.

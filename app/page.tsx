@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -15,12 +13,15 @@ import {
   CheckCircle2Icon,
   PlayIcon,
   ShieldCheckIcon,
+  CalendarIcon,
+  ClockIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/navbar";
 import CreatorFooter from "@/components/footer";
+import { getAllPosts } from "@/lib/blog";
 
 const toolCategories = [
   {
@@ -91,9 +92,10 @@ const toolCategories = [
   },
 ];
 
-
-
+// ✅ Server component — can read blog posts directly
 export default function HomePage() {
+  const recentPosts = getAllPosts().slice(0, 3);
+
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
@@ -141,7 +143,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Background Decorative Element */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-red-100/30 blur-[120px] rounded-full -z-0" />
         </section>
 
@@ -256,7 +257,6 @@ export default function HomePage() {
 
             <div className="relative">
               <div className="aspect-square bg-linear-to-br from-zinc-800 to-zinc-900 rounded-[40px] border border-zinc-700 flex items-center justify-center p-12 overflow-hidden group">
-                {/* <div className="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 transition-opacity" /> */}
                 <div className="relative z-10 text-center space-y-4">
                   <div className="w-20 h-20 bg-red-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-red-900 rotate-6 group-hover:rotate-12 transition-transform duration-500">
                     <PlayIcon className="h-10 w-10 text-white fill-white" />
@@ -265,8 +265,6 @@ export default function HomePage() {
                     Processing Media
                   </p>
                 </div>
-
-                {/* Floating UI elements mock */}
                 <div className="absolute top-10 right-10 p-3 bg-zinc-800 rounded-xl border border-zinc-700 text-[10px] font-bold animate-bounce">
                   4K Quality
                 </div>
@@ -277,6 +275,103 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* --- BLOG SECTION --- */}
+        {recentPosts.length > 0 && (
+          <section className="max-w-6xl mx-auto px-6 py-20">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
+              <div className="space-y-2">
+                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+                  From the Blog
+                </span>
+                <h2 className="text-3xl font-black uppercase italic tracking-tight">
+                  Guides &amp; <span className="text-red-600">Tips.</span>
+                </h2>
+              </div>
+              <Link
+                href="/blog"
+                className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 font-black text-[11px] uppercase tracking-widest transition-colors group"
+              >
+                View All Articles
+                <ArrowRightIcon className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {/* Posts Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {recentPosts.map((post, i) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group"
+                >
+                  <div
+                    className={`h-full flex flex-col justify-between rounded-[24px] border border-zinc-100 p-6 hover:shadow-lg hover:border-zinc-200 transition-all duration-200 ${
+                      i === 0 ? "bg-zinc-900 text-white" : "bg-white"
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[9px] font-black px-2 py-1 rounded-lg uppercase ${
+                            i === 0
+                              ? "bg-red-600 text-white"
+                              : "bg-zinc-100 text-zinc-500"
+                          }`}
+                        >
+                          {post.category}
+                        </span>
+                      </div>
+                      <h3
+                        className={`font-black uppercase italic text-sm leading-tight line-clamp-2 group-hover:text-red-500 transition-colors ${
+                          i === 0 ? "text-white" : "text-zinc-900"
+                        }`}
+                      >
+                        {post.title}
+                      </h3>
+                      <p
+                        className={`text-xs leading-relaxed line-clamp-3 ${
+                          i === 0 ? "text-zinc-400" : "text-zinc-500"
+                        }`}
+                      >
+                        {post.description}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`flex items-center justify-between mt-6 pt-4 border-t ${
+                        i === 0 ? "border-zinc-800" : "border-zinc-50"
+                      }`}
+                    >
+                      <div
+                        className={`flex items-center gap-3 text-[9px] font-bold uppercase ${
+                          i === 0 ? "text-zinc-500" : "text-zinc-400"
+                        }`}
+                      >
+                        <span className="flex items-center gap-1">
+                          <CalendarIcon className="h-2.5 w-2.5" />
+                          {post.date}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <ClockIcon className="h-2.5 w-2.5" />
+                          {post.readTime}m
+                        </span>
+                      </div>
+                      <ArrowRightIcon
+                        className={`h-3.5 w-3.5 group-hover:translate-x-1 transition-all ${
+                          i === 0
+                            ? "text-zinc-600 group-hover:text-red-500"
+                            : "text-zinc-300 group-hover:text-red-600"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <CreatorFooter />
