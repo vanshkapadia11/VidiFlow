@@ -43,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/instagram-downloader`,
+      url: `${baseUrl}/instagram-video-downloader`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -55,19 +55,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/pinterest-downloader`,
+      url: `${baseUrl}/pinterest-video-downloader`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/snapchat-downloader`,
+      url: `${baseUrl}/snapchat-video-downloader`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/twitter-downloader`,
+      url: `${baseUrl}/twitter-video-downloader`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -79,7 +79,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/twitch-downloader`,
+      url: `${baseUrl}/twitch-video-downloader`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -87,13 +87,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // ── CREATOR TOOLS ─────────────────────────────────────────────────────────
     {
-      url: `${baseUrl}/viral-tags`,
+      url: `${baseUrl}/generate-tags`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/creator-architect`,
+      url: `${baseUrl}/generate-description`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -101,7 +101,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // ── OTHER PAGES ───────────────────────────────────────────────────────────
     {
-      url: `${baseUrl}/tools`,
+      url: `${baseUrl}/explore-tools`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.7,
