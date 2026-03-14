@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: "https://vidiflow.co/sitemap.xml",
-    host: "https://vidiflow.co",
+    // host: "https://vidiflow.co",
   };
 }
