@@ -5,7 +5,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://vidiflow.co";
+  const baseUrl = "https://www.vidiflow.co";
   const lastModified = new Date();
 
   return [
