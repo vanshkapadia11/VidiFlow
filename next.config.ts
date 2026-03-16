@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // your existing config only — no PWA package
 };
 
 export default nextConfig;
