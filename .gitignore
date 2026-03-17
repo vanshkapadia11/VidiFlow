@@ -58,5 +58,5 @@ app-release-unsigned-aligned.apk
 app-release-bundle.aab
 app-release-unsigned.apk
 manifest-checksum.txt
-twa-manifest.json
+# twa-manifest.json
 store_icon.png
