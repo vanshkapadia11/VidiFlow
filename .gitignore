@@ -42,8 +42,11 @@ next-env.d.ts
 /android/
 /.gradle/
 /gradle/
-/app/build/
-/app/src/
+app/build/
+app/src/
+build/
+*.apk
+*.aab
 gradlew
 gradlew.bat
 gradle.properties
