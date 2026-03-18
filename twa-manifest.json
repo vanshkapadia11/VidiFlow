@@ -1,6 +1,6 @@
 {
   "packageId": "co.vidiflow.twa",
-  "host": "www.vidiflow.co",
+  "host": "vidiflow.co",
   "name": "VidiFlow",
   "launcherName": "VidiFlow",
   "display": "standalone",
@@ -23,7 +23,7 @@
   "appVersionCode": 3,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://www.vidiflow.co/manifest.json",
+  "webManifestUrl": "https://vidiflow.co/manifest.json",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -32,7 +32,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://www.vidiflow.co/",
+  "fullScopeUrl": "https://vidiflow.co/",
   "minSdkVersion": 21,
   "orientation": "portrait",
   "fingerprints": [
