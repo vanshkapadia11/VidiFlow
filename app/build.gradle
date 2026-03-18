@@ -57,8 +57,8 @@ android {
         applicationId "co.vidiflow.twa"
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 4
-        versionName "1.04"
+        versionCode 6
+        versionName "1.06"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
