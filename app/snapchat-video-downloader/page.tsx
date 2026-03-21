@@ -19,11 +19,14 @@ export const metadata: Metadata = {
     "snapchat story downloader",
     "snapchat to mp4",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/snapchat-video-downloader",
+  },
   openGraph: {
     title: "Snapchat Video Downloader — Free",
     description:
       "Download Snapchat Spotlight and Stories for free. Works on all devices.",
-    url: "https://vidiflow.co/snapchat-downloader",
+    url: "https://www.vidiflow.co/snapchat-video-downloader",
   },
   twitter: {
     title: "Snapchat Video Downloader Free",

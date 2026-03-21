@@ -19,11 +19,14 @@ export const metadata: Metadata = {
     "download youtube 1080p",
     "youtube downloader hd",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/youtube-video-downloader",
+  },
   openGraph: {
     title: "YouTube Video Downloader — Free HD Download",
     description:
       "Download YouTube videos in 1080p, 720p and more. Free, fast, no app needed.",
-    url: "https://vidiflow.co/youtube-video-downloader",
+    url: "https://www.vidiflow.co/youtube-video-downloader",
   },
   twitter: {
     title: "YouTube Video Downloader — Free HD",

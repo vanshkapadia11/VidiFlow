@@ -36,9 +36,12 @@ export async function generateMetadata({
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://vidiflow.com/blog/${slug}`,
+      url: `https://www.vidiflow.com/blog/${slug}`,
       type: "article",
       publishedTime: post.date,
+    },
+    alternates: {
+      canonical: `https://www.vidiflow.co/blog/${slug}`,
     },
     twitter: {
       card: "summary_large_image",

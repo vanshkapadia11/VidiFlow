@@ -20,11 +20,15 @@ const geistMono = Geist_Mono({
 
 // Change 'rootMetadata' to 'metadata' so Next.js can find it
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vidiflow.co"),
+  metadataBase: new URL("https://www.vidiflow.co"),
   title: {
     default:
       "VidiFlow — Free Video Downloader for TikTok, YouTube, Instagram & More",
     template: "%s | VidiFlow",
+  },
+  // altTitle: "VidiFlow — Free Video Downloader for TikTok, YouTube, Instagram & More",
+  alternates: {
+    canonical: "https://www.vidiflow.co",
   },
   description:
     "VidiFlow is a free online video downloader. Download videos from TikTok, YouTube, Instagram, Facebook, Pinterest, Snapchat, Twitter, LinkedIn and Twitch instantly. No app, no signup needed.",

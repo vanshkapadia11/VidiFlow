@@ -20,11 +20,14 @@ export const metadata: Metadata = {
     "download instagram videos free",
     "instagram to mp4",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/instagram-video-downloader",
+  },
   openGraph: {
     title: "Instagram Video & Reels Downloader — Free",
     description:
       "Download Instagram Reels, videos and Stories for free. No watermark, works on all devices.",
-    url: "https://vidiflow.co/instagram-downloader",
+    url: "https://www.vidiflow.co/instagram-downloader",
   },
   twitter: {
     title: "Instagram Video Downloader — Free",

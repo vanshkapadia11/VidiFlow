@@ -19,11 +19,14 @@ export const metadata: Metadata = {
     "linkedin to mp4",
     "linkedin post video download",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/linkedin-video-downloader",
+  },
   openGraph: {
     title: "LinkedIn Video Downloader — Free",
     description:
       "Download LinkedIn videos for free. HD quality, works on all devices.",
-    url: "https://vidiflow.co/linkedin-video-downloader",
+    url: "https://www.vidiflow.co/linkedin-video-downloader",
   },
   twitter: {
     title: "LinkedIn Video Downloader Free",

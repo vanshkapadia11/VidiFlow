@@ -22,11 +22,14 @@ export const metadata: Metadata = {
     "save instagram reels",
     "vidiflow blog",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/blog",
+  },
   openGraph: {
     title: "VidiFlow Blog — Video Downloading Guides & Tips",
     description:
       "Free guides on how to download videos from any platform. TikTok, YouTube, Instagram and more.",
-    url: "https://vidiflow.com/blog",
+    url: "https://www.vidiflow.co/blog",
   },
 };
 

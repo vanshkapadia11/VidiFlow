@@ -19,11 +19,14 @@ export const metadata: Metadata = {
     "download pinterest free",
     "pinterest video save",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/pinterest-video-downloader",
+  },
   openGraph: {
     title: "Pinterest Video Downloader — Free",
     description:
       "Download Pinterest videos and GIFs for free. HD quality, works on all devices.",
-    url: "https://vidiflow.co/pinterest-video-downloader",
+    url: "https://www.vidiflow.co/pinterest-video-downloader",
   },
   twitter: {
     title: "Pinterest Video Downloader Free",

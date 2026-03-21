@@ -19,11 +19,15 @@ export const metadata: Metadata = {
     "redd.it downloader",
     "vreddit downloader",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/reddit-video-downloader",
+  },
+
   openGraph: {
     title: "Reddit Video Downloader — Free",
     description:
       "Download Reddit videos and GIFs for free. HD quality, works on all devices.",
-    url: "https://vidiflow.co/reddit-video-downloader",
+    url: "https://www.vidiflow.co/reddit-video-downloader",
   },
   twitter: {
     card: "summary_large_image",

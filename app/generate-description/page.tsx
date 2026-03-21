@@ -20,11 +20,14 @@ export const metadata: Metadata = {
     "youtube strategy tool",
     "content blueprint",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/generate-description",
+  },
   openGraph: {
     title: "Creator Architect — Build Better Content",
     description:
       "Architect your next viral video. Professional script structures and brand identity tools for creators.",
-    url: "https://vidiflow.co/architect",
+    url: "https://www.vidiflow.co/generate-description",
   },
   twitter: {
     title: "Creator Architect — AI Content Blueprint",

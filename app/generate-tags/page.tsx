@@ -22,11 +22,14 @@ export const metadata: Metadata = {
     "trending youtube tags",
     "youtube seo 2026",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/generate-tags",
+  },
   openGraph: {
     title: "ViralTags — YouTube SEO & Tag Generator",
     description:
       "Boost your video ranking with AI-generated tags and viral SEO strategies. Free for creators.",
-    url: "https://vidiflow.co/viral-tags",
+    url: "https://www.vidiflow.co/generate-tags",
   },
   twitter: {
     title: "ViralTags — YouTube SEO Tool",

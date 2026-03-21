@@ -19,11 +19,14 @@ export const metadata: Metadata = {
     "youtube thumbnail free",
     "youtube cover image download",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/youtube-thumbnail-downloader",
+  },
   openGraph: {
     title: "YouTube Thumbnail Downloader — Free HD",
     description:
       "Download any YouTube video thumbnail in HD resolution. Free and instant.",
-    url: "https://vidiflow.co/youtube-thumbnail-downloader",
+    url: "https://www.vidiflow.co/youtube-thumbnail-downloader",
   },
   twitter: {
     title: "YouTube Thumbnail Downloader Free",

@@ -20,11 +20,14 @@ export const metadata: Metadata = {
     "youtube music downloader",
     "youtube mp3 download",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/youtube-audio-downloader",
+  },
   openGraph: {
     title: "YouTube to MP3 Converter — Free Audio Download",
     description:
       "Convert any YouTube video to MP3 instantly. Up to 320kbps quality, free forever.",
-    url: "https://vidiflow.co/youtube-audio-downloader",
+    url: "https://www.vidiflow.co/youtube-audio-downloader",
   },
   twitter: {
     title: "YouTube to MP3 — Free Converter",

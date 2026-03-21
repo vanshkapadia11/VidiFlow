@@ -18,11 +18,14 @@ export const metadata: Metadata = {
     "tiktok downloader online free",
     "tiktok to mp4",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/tiktok-video-downloader",
+  },
   openGraph: {
     title: "TikTok Video Downloader — No Watermark, Free",
     description:
       "Download TikTok videos without watermark instantly. Free, no app, works on all devices.",
-    url: "https://vidiflow.co/tiktok-video-downloader",
+    url: "https://www.vidiflow.co/tiktok-video-downloader",
   },
   twitter: {
     title: "TikTok Video Downloader — No Watermark Free",

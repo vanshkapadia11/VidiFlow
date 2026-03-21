@@ -19,11 +19,15 @@ export const metadata: Metadata = {
     "twitch to mp4",
     "twitch clip save",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/twitch-video-downloader",
+  },
+
   openGraph: {
     title: "Twitch Clip Downloader — Free",
     description:
       "Download Twitch clips and VODs for free. HD quality, works on all devices.",
-    url: "https://vidiflow.co/twitch-downloader",
+    url: "https://www.vidiflow.co/twitch-video-downloader",
   },
   twitter: {
     title: "Twitch Clip Downloader Free",

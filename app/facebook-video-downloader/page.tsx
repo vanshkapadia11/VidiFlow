@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     "facebook to mp4",
     "fb video downloader",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/facebook-video-downloader",
+  },
   openGraph: {
     title: "Facebook Video Downloader — Free HD Download",
     description:

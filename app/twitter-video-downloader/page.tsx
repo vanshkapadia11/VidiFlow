@@ -21,11 +21,14 @@ export const metadata: Metadata = {
     "twitter to mp4",
     "x downloader free",
   ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/twitter-video-downloader",
+  },
   openGraph: {
     title: "Twitter / X Video Downloader — Free",
     description:
       "Download Twitter and X videos and GIFs for free. HD quality, works on all devices.",
-    url: "https://vidiflow.co/twitter-downloader",
+    url: "https://www.vidiflow.co/twitter-video-downloader",
   },
   twitter: {
     title: "Twitter Video Downloader Free",
