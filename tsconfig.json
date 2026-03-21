@@ -28,7 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "app/api/reddit/route.js",
+    "app/api/reddit-proxy/route.js"
   ],
   "exclude": ["node_modules"]
 }

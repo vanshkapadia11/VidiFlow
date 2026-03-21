@@ -833,3 +833,73 @@ export const tiktokContent = {
     },
   ],
 };
+
+// Add this to your app/lib/page-content.ts file
+
+export const redditContent = {
+  description: `VidiFlow's Reddit Video Downloader lets you save any public Reddit video 
+  or GIF to your device for free. Whether it's a funny clip, a gaming highlight, a sports 
+  moment or a viral GIF from any subreddit — just paste the Reddit post link and download 
+  instantly in HD quality. Works on iPhone, Android, PC and Mac. No app needed, no account 
+  required, completely free.`,
+
+  steps: [
+    {
+      number: "01",
+      title: "Copy the Reddit Link",
+      desc: "Open Reddit, find the video post, tap Share → Copy Link. Works with reddit.com and redd.it links.",
+    },
+    {
+      number: "02",
+      title: "Paste the Link",
+      desc: "Paste the Reddit post URL into VidiFlow and click Get Video.",
+    },
+    {
+      number: "03",
+      title: "Choose Quality & Download",
+      desc: "Select your preferred quality and click Download. The video saves to your device instantly.",
+    },
+  ],
+
+  features: [
+    { icon: "✅", text: "Download Reddit videos in HD" },
+    { icon: "✅", text: "Download Reddit GIFs as MP4" },
+    { icon: "✅", text: "Multiple quality options" },
+    { icon: "✅", text: "Works with all subreddits" },
+    { icon: "✅", text: "Works on iPhone, Android, PC and Mac" },
+    { icon: "✅", text: "No app download needed" },
+    { icon: "✅", text: "No account or login required" },
+    { icon: "✅", text: "100% free forever" },
+  ],
+
+  faqs: [
+    {
+      q: "How do I download Reddit videos for free?",
+      a: "Copy the Reddit post link, paste it into VidiFlow, and click Get Video. Select your preferred quality and click Download. The video saves to your device instantly.",
+    },
+    {
+      q: "Can I download Reddit GIFs?",
+      a: "Yes, VidiFlow supports downloading Reddit GIFs and gifv files. They are converted to MP4 format which works on all devices.",
+    },
+    {
+      q: "Why does Reddit video have no sound?",
+      a: "Reddit stores video and audio as separate files. VidiFlow downloads the video track. For videos with sound, the audio is included when available.",
+    },
+    {
+      q: "Can I download from private subreddits?",
+      a: "No, VidiFlow can only download videos from public subreddits. Private or restricted subreddits are not accessible.",
+    },
+    {
+      q: "Does it work with redd.it short links?",
+      a: "Yes, VidiFlow supports both reddit.com and redd.it short links.",
+    },
+    {
+      q: "What quality can I download Reddit videos in?",
+      a: "VidiFlow offers multiple quality options up to 1080p depending on the original upload quality.",
+    },
+    {
+      q: "Is it free to download Reddit videos?",
+      a: "Yes, VidiFlow is completely free with no limits on downloads.",
+    },
+  ],
+};

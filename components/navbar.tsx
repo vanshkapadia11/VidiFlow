@@ -43,9 +43,9 @@ const navLinks = [
     comingSoon: false,
   },
 
-  // ── YouTube ──
+  // ── More Vidiflow Tools ──
   {
-    group: "YouTube",
+    group: "More Vidiflow Tools",
     name: "YT Audio",
     href: "/youtube-audio-downloader",
     icon: MusicIcon,
@@ -54,7 +54,7 @@ const navLinks = [
     comingSoon: true,
   },
   {
-    group: "YouTube",
+    group: "More Vidiflow Tools",
     name: "YT Video",
     href: "/youtube-video-downloader",
     icon: VideoIcon,
@@ -63,12 +63,39 @@ const navLinks = [
     comingSoon: true,
   },
   {
-    group: "YouTube",
+    group: "More Vidiflow Tools",
     name: "YT Thumbnail",
     href: "/youtube-thumbnail-downloader",
     icon: ImageIcon,
     color: "text-red-500",
     bg: "bg-red-50",
+    comingSoon: false,
+  },
+  {
+    group: "More Vidiflow Tools",
+    name: "Reddit DL",
+    href: "/reddit-video-downloader",
+    icon: DownloadIcon,
+    color: "text-orange-500",
+    bg: "bg-orange-50",
+    comingSoon: false,
+  },
+  {
+    group: "More Vidiflow Tools",
+    name: "Twitch DL",
+    href: "/twitch-video-downloader",
+    icon: TvIcon,
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+    comingSoon: false,
+  },
+  {
+    group: "More Vidiflow Tools",
+    name: "LinkedIn DL",
+    href: "/linkedin-video-downloader",
+    icon: BriefcaseIcon,
+    color: "text-blue-700",
+    bg: "bg-blue-50",
     comingSoon: false,
   },
 
@@ -125,24 +152,6 @@ const navLinks = [
     icon: VideoIcon,
     color: "text-zinc-800",
     bg: "bg-zinc-100",
-    comingSoon: false,
-  },
-  {
-    group: "Downloaders",
-    name: "Twitch DL",
-    href: "/twitch-video-downloader",
-    icon: TvIcon,
-    color: "text-purple-600",
-    bg: "bg-purple-50",
-    comingSoon: false,
-  },
-  {
-    group: "Downloaders",
-    name: "LinkedIn DL",
-    href: "/linkedin-video-downloader",
-    icon: BriefcaseIcon,
-    color: "text-blue-700",
-    bg: "bg-blue-50",
     comingSoon: false,
   },
 ];
@@ -234,7 +243,7 @@ const Navbar = () => {
                   </Link>
                 ))}
 
-              {/* ✅ BLOG LINK */}
+              {/* BLOG LINK */}
               <Link
                 href="/blog"
                 className={cn(
@@ -270,7 +279,19 @@ const Navbar = () => {
                 </button>
 
                 {showMore && (
-                  <div className="absolute top-full right-0 mt-2 w-[540px] bg-white rounded-2xl shadow-2xl border border-zinc-100 p-5 z-[200]">
+                  <div
+                    className={cn(
+                      "absolute top-full right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-100 p-5 z-[200]",
+                      "w-[560px] max-w-[calc(100vw-48px)]",
+                      "max-h-[calc(100vh-100px)] overflow-y-auto",
+                      // ✅ Custom scrollbar
+                      "[&::-webkit-scrollbar]:w-1.5",
+                      "[&::-webkit-scrollbar-track]:bg-transparent",
+                      "[&::-webkit-scrollbar-thumb]:bg-zinc-200",
+                      "[&::-webkit-scrollbar-thumb]:rounded-full",
+                      "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-300",
+                    )}
+                  >
                     <div className="grid grid-cols-2 gap-5">
                       {groups.map((group) => (
                         <div key={group}>
@@ -368,7 +389,6 @@ const Navbar = () => {
             isOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          {/* Drawer header */}
           <div className="flex items-center justify-between p-6 pb-4 shrink-0">
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
               Navigation
@@ -383,9 +403,8 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Scrollable grouped links */}
           <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-5">
-            {/* ✅ BLOG LINK IN MOBILE */}
+            {/* BLOG IN MOBILE */}
             <div>
               <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.25em] mb-2 px-1">
                 Resources

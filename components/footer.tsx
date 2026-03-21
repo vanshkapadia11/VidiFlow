@@ -186,6 +186,13 @@ export default function CreatorFooter() {
                 <BriefcaseIcon className="h-3.5 w-3.5 text-blue-700" /> LinkedIn
                 DL
               </Link>
+              <Link
+                href="/reddit-video-downloader"
+                className="flex items-center gap-2 hover:text-orange-500 transition-colors"
+              >
+                <DownloadIcon className="h-3.5 w-3.5 text-orange-500" /> Reddit
+                DL
+              </Link>
             </div>
           </div>
         </div>
