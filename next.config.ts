@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // your existing config only — no PWA package
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "vidiflow.co" }],
+        destination: "https://www.vidiflow.co/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
