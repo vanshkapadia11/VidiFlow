@@ -94,6 +94,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={jetbrainsMono.variable}>
       <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9027923218074479"
+          crossorigin="anonymous"
+        ></script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#e60023" />
         <meta name="mobile-web-app-capable" content="yes" />
