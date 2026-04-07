@@ -63,6 +63,15 @@ const navLinks = [
     comingSoon: true,
   },
   {
+    group: "Creator Tools",
+    name: "Transcriber",
+    href: "/video-transcriber",
+    icon: FileTextIcon,
+    color: "text-violet-600",
+    bg: "bg-violet-50",
+    comingSoon: false,
+  },
+  {
     group: "More Vidiflow Tools",
     name: "YT Thumbnail",
     href: "/youtube-thumbnail-downloader",
@@ -158,7 +167,8 @@ const navLinks = [
 
 const desktopPrimary = [
   "Tag Master",
-  "YT Audio",
+  // "YT Audio",
+  "Transcriber", // ← add this
   "YT Video",
   "TikTok DL",
   "Pinterest DL",

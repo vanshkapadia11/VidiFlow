@@ -903,3 +903,67 @@ export const redditContent = {
     },
   ],
 };
+
+export const videoTranscriberContent = {
+  description: `VidiFlow's Video Transcriber converts any YouTube video to text instantly using AI — completely free. Whether it's a lecture, podcast, interview, tutorial, or meeting recording, just paste the YouTube link and get an accurate text transcript in seconds. Supports 99 languages with automatic detection. No app needed, no account required. Works on iPhone, Android, PC and Mac.`,
+
+  steps: [
+    {
+      number: "01",
+      title: "Paste the YouTube Link",
+      desc: "Copy any YouTube video URL and paste it into the transcriber above.",
+    },
+    {
+      number: "02",
+      title: "Start Transcription",
+      desc: "Click Transcribe and our AI engine will process the audio and convert it to text.",
+    },
+    {
+      number: "03",
+      title: "Copy or Download",
+      desc: "Your transcript is ready instantly. Copy it to clipboard or download as a text file.",
+    },
+  ],
+
+  features: [
+    { icon: "✅", text: "Supports 99 languages" },
+    { icon: "✅", text: "Automatic language detection" },
+    { icon: "✅", text: "AI-powered accuracy" },
+    { icon: "✅", text: "Works with any YouTube video" },
+    { icon: "✅", text: "Works on iPhone, Android, PC and Mac" },
+    { icon: "✅", text: "No app download needed" },
+    { icon: "✅", text: "No account or login required" },
+    { icon: "✅", text: "100% free forever" },
+  ],
+
+  faqs: [
+    {
+      q: "How do I transcribe a YouTube video for free?",
+      a: "Paste the YouTube video URL into VidiFlow's transcriber and click Transcribe. Our AI will process the audio and return the full transcript in seconds.",
+    },
+    {
+      q: "What languages does the transcriber support?",
+      a: "VidiFlow's transcriber supports 99 languages with automatic detection — no need to manually select the language.",
+    },
+    {
+      q: "How accurate is the transcription?",
+      a: "VidiFlow uses AssemblyAI's Universal-2 model which delivers industry-leading accuracy for speech-to-text across accents, noise levels, and languages.",
+    },
+    {
+      q: "Can I transcribe long YouTube videos?",
+      a: "Yes, VidiFlow supports transcribing videos of any length. Longer videos may take a little more time to process.",
+    },
+    {
+      q: "Can I download the transcript?",
+      a: "Yes, once the transcript is generated you can copy it to clipboard or download it as a text file directly from the page.",
+    },
+    {
+      q: "Does it work with YouTube Shorts?",
+      a: "Yes, VidiFlow's transcriber works with YouTube Shorts as well as regular YouTube videos.",
+    },
+    {
+      q: "Why is my transcription taking long?",
+      a: "Transcription time depends on video length. Most videos complete in under a minute. Very long videos may take a few minutes.",
+    },
+  ],
+};

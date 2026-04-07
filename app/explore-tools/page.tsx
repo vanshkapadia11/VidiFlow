@@ -40,6 +40,16 @@ const allFeatures = [
     color: "bg-red-50",
   },
   {
+    title: "Video Transcriber",
+    desc: "Transcribe any YouTube video to text using AI — 99 languages supported.",
+    icon: <FileTextIcon className="h-5 w-5 text-violet-600" />,
+    category: "seo", // or add a new "ai" category
+    status: "Live",
+      paid: true,        // ← add this
+    href: "/video-transcriber",
+    color: "bg-violet-50",
+  },
+  {
     title: "YouTube Audio",
     desc: "Extract high-bitrate MP3/WAV from any video link.",
     icon: <MusicIcon className="h-5 w-5 text-blue-500" />,
@@ -208,23 +218,28 @@ export default function ExploreFeatures() {
                 <div className="h-full bg-white border border-zinc-200/60 rounded-[32px] p-8 transition-all duration-300 hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start mb-6">
-                      <div
-                        className={`${feature.color} p-4 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500`}
-                      >
+                      <div className={`${feature.color} p-4 rounded-2xl ...`}>
                         {feature.icon}
                       </div>
-                      {feature.status === "Soon" ? (
-                        <Badge className="bg-amber-100 text-amber-600 border-none text-[9px] font-black uppercase px-2 py-1">
-                          Coming Soon
-                        </Badge>
-                      ) : (
-                        <div className="flex items-center gap-1.5">
-                          <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                          <span className="text-[9px] font-black uppercase text-zinc-400 tracking-wider">
-                            Live Now
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex flex-col items-end gap-1.5">
+                        {feature.status === "Soon" ? (
+                          <Badge className="bg-amber-100 text-amber-600 border-none text-[9px] font-black uppercase px-2 py-1">
+                            Coming Soon
+                          </Badge>
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                            <span className="text-[9px] font-black uppercase text-zinc-400 tracking-wider">
+                              Live Now
+                            </span>
+                          </div>
+                        )}
+                        {feature.paid && (
+                          <Badge className="bg-violet-100 text-violet-600 border-none text-[9px] font-black uppercase px-2 py-1">
+                            ⚡ Pro
+                          </Badge>
+                        )}
+                      </div>
                     </div>
 
                     <h3 className="text-xl font-black uppercase italic text-zinc-900 mb-2 group-hover:text-red-600 transition-colors">

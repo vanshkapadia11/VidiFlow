@@ -79,6 +79,15 @@ export default function CreatorFooter() {
                   Guides
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/video-transcriber"
+                  className="flex items-center gap-2 hover:text-violet-600 transition-colors"
+                >
+                  <FileTextIcon className="h-3.5 w-3.5 text-violet-600" />{" "}
+                  Transcriber
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -150,6 +159,15 @@ export default function CreatorFooter() {
               >
                 <VideoIcon className="h-3.5 w-3.5 text-blue-600" /> Facebook DL
               </Link>
+              {/* <li> */}
+              <Link
+                href="/video-transcriber"
+                className="flex items-center gap-2 hover:text-violet-600 transition-colors"
+              >
+                <FileTextIcon className="h-3.5 w-3.5 text-violet-600" />{" "}
+                Transcriber
+              </Link>
+              {/* </li> */}
             </div>
           </div>
 

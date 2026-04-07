@@ -15,6 +15,7 @@ import {
   ShieldCheckIcon,
   CalendarIcon,
   ClockIcon,
+  FileTextIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +83,13 @@ const toolCategories = [
         name: "Desc Grabber",
         href: "/generate-description",
         icon: <SparklesIcon className="h-4 w-4" />,
+      },
+      {
+        name: "Video Transcriber",
+        href: "/video-transcriber",
+        icon: <FileTextIcon className="h-4 w-4" />,
+        status: "Pro", // ← add this
+        paid: true, // ← add this
       },
       {
         name: "LinkedIn DL",
