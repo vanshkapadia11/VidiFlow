@@ -1,8 +1,8 @@
-// app/api/youtube-audio/route.js
 import { NextResponse } from "next/server";
 
 const RENDER_URL = process.env.YTDLP_API_URL || "";
 const RENDER_SECRET = process.env.YTDLP_API_SECRET || "";
+console.log("DEBUG: Target URL is:", RENDER_URL);
 
 export async function POST(req) {
   try {
@@ -16,36 +16,25 @@ export async function POST(req) {
         { status: 500 },
       );
 
-    const renderRes = await fetch(`${RENDER_URL}/youtube/audio`, {
+    const renderRes = await fetch(`${RENDER_URL}/youtube/info`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-secret": RENDER_SECRET,
       },
       body: JSON.stringify({ url }),
-      signal: AbortSignal.timeout(300_000),
+      signal: AbortSignal.timeout(30_000),
     });
 
-    const contentType = renderRes.headers.get("Content-Type") || "";
-    if (!renderRes.ok || contentType.includes("application/json")) {
-      const errData = await renderRes.json().catch(() => ({}));
+    const data = await renderRes.json();
+    if (!renderRes.ok || data.error) {
       return NextResponse.json(
-        { error: errData.error || `Error ${renderRes.status}` },
+        { error: data.error || `Error ${renderRes.status}` },
         { status: renderRes.status || 500 },
       );
     }
 
-    const disposition =
-      renderRes.headers.get("Content-Disposition") ||
-      'attachment; filename="audio.mp3"';
-    const contentLength = renderRes.headers.get("Content-Length");
-    const headers = new Headers({
-      "Content-Type": "audio/mpeg",
-      "Content-Disposition": disposition,
-    });
-    if (contentLength) headers.set("Content-Length", contentLength);
-
-    return new Response(renderRes.body, { status: 200, headers });
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

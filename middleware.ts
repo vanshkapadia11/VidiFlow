@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/privacy-policy(.*)",
+  "/api/(.*)", // <--- ADD THIS LINE TO UNBLOCK ALL API ROUTES
 
   // ── Video Downloaders ──────────────────────────────
   "/tiktok-video-downloader(.*)",

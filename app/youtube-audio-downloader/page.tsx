@@ -3,8 +3,9 @@ import CreatorFooter from "@/components/footer";
 import { Metadata } from "next";
 import PageContent from "@/components/pageContent";
 // import YouTubeDownloaderComingSoon from "./YoutubeVideoDownloader";
-import YouTubeAudioComingSoon from "./YoutubeAudioDownloader";
+// import YouTubeAudioDownloader from "./YoutubeAudioDownloader";
 import { youtubeAudioContent } from "@/lib/page-content";
+import YouTubeAudioDownloader from "./YoutubeAudioDownloader";
 
 export const metadata: Metadata = {
   title: "YouTube to MP3 Converter — Download YouTube Audio Free",
@@ -39,7 +40,7 @@ const YoutubeAudioDownloadPage = () => {
   return (
     <>
       <main>
-        <YouTubeAudioComingSoon />
+        <YouTubeAudioDownloader />
       </main>
       <PageContent
         description={youtubeAudioContent.description}

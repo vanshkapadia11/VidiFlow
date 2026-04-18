@@ -16,14 +16,13 @@ import {
   VideoIcon,
   TvIcon,
   BriefcaseIcon,
-  MenuIcon,
   BookOpenIcon,
+  ArrowRightIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  // ── Creator Tools ──
   {
     group: "Creator Tools",
     name: "Tag Master",
@@ -42,8 +41,6 @@ const navLinks = [
     bg: "bg-amber-50",
     comingSoon: false,
   },
-
-  // ── More Vidiflow Tools ──
   {
     group: "More Vidiflow Tools",
     name: "YT Audio",
@@ -107,8 +104,6 @@ const navLinks = [
     bg: "bg-blue-50",
     comingSoon: false,
   },
-
-  // ── Downloaders ──
   {
     group: "Downloaders",
     name: "TikTok DL",
@@ -167,9 +162,8 @@ const navLinks = [
 
 const desktopPrimary = [
   "Tag Master",
-  // "YT Audio",
-  "Transcriber", // ← add this
-  "YT Video",
+  "Transcriber",
+  "YT Thumbnail",
   "TikTok DL",
   "Pinterest DL",
 ];
@@ -205,81 +199,100 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-[100] w-full bg-white">
+      <header className="sticky top-0 z-[100] w-full">
+        {/* Top accent bar — matches hero color palette */}
         <div className="h-[3px] w-full bg-gradient-to-r from-red-600 via-zinc-900 to-red-600" />
 
-        <nav className="border-b border-zinc-100 bg-white/80 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            {/* LOGO */}
+        <nav className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md shadow-sm shadow-zinc-100/60">
+          <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
+            {/* ── LOGO ── */}
             <Link
               href="/"
-              className="flex items-center gap-3 active:scale-95 transition-transform shrink-0"
+              className="flex items-center gap-3 active:scale-95 transition-transform shrink-0 group"
             >
-              <div className="bg-red-600 p-2.5 rounded-xl shadow-lg">
-                <SparklesIcon className="text-white h-5 w-5 fill-white/20" />
+              <div className="relative">
+                {/* Glow behind icon — mirrors hero blobs */}
+                <div className="absolute inset-0 bg-red-400/30 blur-md rounded-xl scale-125 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative bg-red-600 p-2.5 rounded-xl shadow-lg shadow-red-200">
+                  <SparklesIcon className="text-white h-5 w-5 fill-white/20" />
+                </div>
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black text-zinc-900 italic uppercase tracking-tighter leading-none">
                   Vidi<span className="text-red-600">Flow</span>
                 </span>
-                <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-1">
+                <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">
                   Creator Toolbox
                 </span>
               </div>
             </Link>
 
-            {/* DESKTOP NAV */}
-            <div className="hidden lg:flex items-center gap-1">
+            {/* ── DESKTOP NAV ── */}
+            <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
               {navLinks
                 .filter((l) => desktopPrimary.includes(l.name))
-                .map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={cn(
-                      "relative px-3 py-2 text-[11px] font-bold rounded-xl flex items-center gap-1.5 uppercase transition-all whitespace-nowrap",
-                      pathname === link.href
-                        ? "bg-zinc-100 text-zinc-900"
-                        : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50",
-                    )}
-                  >
-                    <link.icon className={cn("h-3.5 w-3.5", link.color)} />
-                    {link.name}
-                    {link.comingSoon && (
-                      <span className="ml-0.5 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 leading-none">
-                        Soon
-                      </span>
-                    )}
-                  </Link>
-                ))}
+                .map((link) => {
+                  const active = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      className={cn(
+                        "relative px-3.5 py-2 text-[10px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap group",
+                        active
+                          ? "bg-zinc-900 text-white shadow-md"
+                          : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border border-transparent hover:border-zinc-200/60",
+                      )}
+                    >
+                      {/* Active left bar — mirrors tool card hover accent */}
+                      {active && (
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-red-500 rounded-full" />
+                      )}
+                      <link.icon
+                        className={cn(
+                          "h-3.5 w-3.5 shrink-0",
+                          active ? "text-red-400" : link.color,
+                        )}
+                      />
+                      {link.name}
+                      {link.comingSoon && (
+                        <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 leading-none">
+                          Soon
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
 
-              {/* BLOG LINK */}
+              {/* Blog link */}
               <Link
                 href="/blog"
                 className={cn(
-                  "relative px-3 py-2 text-[11px] font-bold rounded-xl flex items-center gap-1.5 uppercase transition-all whitespace-nowrap",
+                  "relative px-3.5 py-2 text-[11px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap",
                   pathname === "/blog" || pathname.startsWith("/blog/")
-                    ? "bg-zinc-100 text-zinc-900"
-                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50",
+                    ? "bg-zinc-900 text-white shadow-md"
+                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border border-transparent hover:border-zinc-200/60",
                 )}
               >
-                <BookOpenIcon className="h-3.5 w-3.5 text-green-600" />
+                {(pathname === "/blog" || pathname.startsWith("/blog/")) && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-red-500 rounded-full" />
+                )}
+                <BookOpenIcon className="h-3.5 w-3.5 text-green-500" />
                 Blog
               </Link>
 
-              {/* MORE DROPDOWN */}
+              {/* More dropdown */}
               <div className="relative" ref={moreRef}>
                 <button
                   onClick={() => setShowMore((v) => !v)}
                   className={cn(
-                    "px-3 py-2 text-[11px] font-bold rounded-xl flex items-center gap-1.5 uppercase transition-all",
+                    "px-3.5 py-2 text-[11px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all border",
                     showMore
-                      ? "bg-zinc-100 text-zinc-900"
-                      : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50",
+                      ? "bg-zinc-900 text-white border-zinc-800 shadow-md"
+                      : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border-transparent hover:border-zinc-200/60",
                   )}
                 >
-                  <MenuIcon className="h-3.5 w-3.5" />
-                  More
+                  All Tools
                   <ChevronRightIcon
                     className={cn(
                       "h-3 w-3 transition-transform duration-200",
@@ -291,69 +304,92 @@ const Navbar = () => {
                 {showMore && (
                   <div
                     className={cn(
-                      "absolute top-full right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-100 p-5 z-[200]",
-                      "w-[560px] max-w-[calc(100vw-48px)]",
-                      "max-h-[calc(100vh-100px)] overflow-y-auto",
-                      // ✅ Custom scrollbar
+                      "absolute top-full right-0 mt-3 bg-white rounded-[24px] shadow-2xl shadow-zinc-200/80 border border-zinc-100/80 p-6 z-[200]",
+                      "w-[580px] max-w-[calc(100vw-48px)]",
+                      "max-h-[calc(100vh-120px)] overflow-y-auto",
                       "[&::-webkit-scrollbar]:w-1.5",
                       "[&::-webkit-scrollbar-track]:bg-transparent",
-                      "[&::-webkit-scrollbar-thumb]:bg-zinc-200",
-                      "[&::-webkit-scrollbar-thumb]:rounded-full",
-                      "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-300",
+                      "[&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full",
                     )}
                   >
-                    <div className="grid grid-cols-2 gap-5">
+                    {/* Dropdown header — mirrors section headings */}
+                    <div className="flex items-center justify-between mb-5 pb-4 border-b border-zinc-100">
+                      <div>
+                        <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.25em]">
+                          Everything You Need
+                        </p>
+                        <h3 className="text-base font-black uppercase italic tracking-tight text-zinc-900 leading-tight">
+                          Our <span className="text-red-600">Power</span> Tools
+                        </h3>
+                      </div>
+                      <Link
+                        href="/explore-tools"
+                        className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-red-600 transition-colors"
+                      >
+                        See All <ArrowRightIcon className="h-3 w-3" />
+                      </Link>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
                       {groups.map((group) => (
                         <div key={group}>
-                          <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.2em] mb-2 px-1">
+                          <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.2em] mb-2.5 px-1">
                             {group}
                           </p>
-                          <div className="space-y-0.5">
+                          <div className="space-y-1">
                             {navLinks
                               .filter((l) => l.group === group)
-                              .map((link) => (
-                                <Link
-                                  key={link.name}
-                                  href={link.href}
-                                  className={cn(
-                                    "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-[11px] font-bold uppercase",
-                                    pathname === link.href
-                                      ? "bg-zinc-900 text-white"
-                                      : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
-                                  )}
-                                >
-                                  <div
+                              .map((link) => {
+                                const active = pathname === link.href;
+                                return (
+                                  <Link
+                                    key={link.name}
+                                    href={link.href}
                                     className={cn(
-                                      "p-1.5 rounded-lg shrink-0",
-                                      pathname === link.href
-                                        ? "bg-white/10"
-                                        : link.bg,
+                                      "group flex items-center gap-3 px-3 py-2.5 rounded-[14px] transition-all text-[11px] font-black uppercase tracking-wider relative overflow-hidden",
+                                      active
+                                        ? "bg-zinc-900 text-white"
+                                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
                                     )}
                                   >
-                                    <link.icon
+                                    {/* Hover fill — mirrors tool card */}
+                                    {!active && (
+                                      <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[14px]" />
+                                    )}
+                                    <div
                                       className={cn(
-                                        "h-3.5 w-3.5",
-                                        pathname === link.href
-                                          ? "text-white"
-                                          : link.color,
-                                      )}
-                                    />
-                                  </div>
-                                  <span className="flex-1">{link.name}</span>
-                                  {link.comingSoon && (
-                                    <span
-                                      className={cn(
-                                        "text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none shrink-0",
-                                        pathname === link.href
-                                          ? "bg-white/20 text-white"
-                                          : "bg-amber-100 text-amber-600",
+                                        "p-1.5 rounded-lg shrink-0 relative z-10",
+                                        active ? "bg-white/10" : link.bg,
                                       )}
                                     >
-                                      Soon
+                                      <link.icon
+                                        className={cn(
+                                          "h-3.5 w-3.5",
+                                          active ? "text-white" : link.color,
+                                        )}
+                                      />
+                                    </div>
+                                    <span className="flex-1 relative z-10">
+                                      {link.name}
                                     </span>
-                                  )}
-                                </Link>
-                              ))}
+                                    {link.comingSoon && (
+                                      <span
+                                        className={cn(
+                                          "text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none shrink-0 relative z-10",
+                                          active
+                                            ? "bg-white/20 text-white"
+                                            : "bg-amber-100 text-amber-600",
+                                        )}
+                                      >
+                                        Soon
+                                      </span>
+                                    )}
+                                    {!active && !link.comingSoon && (
+                                      <ArrowRightIcon className="h-3 w-3 text-zinc-300 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all relative z-10" />
+                                    )}
+                                  </Link>
+                                );
+                              })}
                           </div>
                         </div>
                       ))}
@@ -363,58 +399,79 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* MOBILE TOGGLE */}
-            <Button
-              variant="ghost"
-              size="icon"
+            {/* ── DESKTOP CTA ── */}
+            <div className="hidden lg:flex items-center shrink-0">
+              <Link href="/explore-tools">
+                <button className="h-10 px-5 bg-zinc-900 text-white rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-zinc-800 hover:scale-[1.02] transition-all shadow-md shadow-zinc-300/40 flex items-center gap-2 border border-zinc-800">
+                  Explore Tools <ArrowRightIcon className="h-3.5 w-3.5" />
+                </button>
+              </Link>
+            </div>
+
+            {/* ── MOBILE TOGGLE ── */}
+            <button
               onClick={() => setIsOpen(true)}
-              className="lg:hidden h-11 w-11 rounded-xl bg-zinc-50 border border-zinc-200"
+              className="lg:hidden h-11 w-11 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-col items-center justify-center gap-1.5 hover:bg-zinc-100 transition-colors"
             >
-              <div className="flex flex-col gap-1">
-                <span className="h-0.5 w-5 bg-zinc-800 rounded-full" />
-                <span className="h-0.5 w-5 bg-zinc-800 rounded-full" />
-              </div>
-            </Button>
+              <span className="h-0.5 w-5 bg-zinc-800 rounded-full" />
+              <span className="h-0.5 w-3.5 bg-zinc-500 rounded-full" />
+            </button>
           </div>
         </nav>
       </header>
 
-      {/* MOBILE DRAWER */}
+      {/* ── MOBILE DRAWER ── */}
       <div
         className={cn(
           "fixed inset-0 z-[150] lg:hidden transition-all duration-300",
           isOpen ? "visible" : "invisible",
         )}
       >
+        {/* Backdrop */}
         <div
           className={cn(
-            "absolute inset-0 bg-zinc-950/40 backdrop-blur-md transition-opacity duration-300",
+            "absolute inset-0 bg-zinc-950/50 backdrop-blur-md transition-opacity duration-300",
             isOpen ? "opacity-100" : "opacity-0",
           )}
           onClick={() => setIsOpen(false)}
         />
+
+        {/* Drawer panel */}
         <div
           className={cn(
-            "absolute top-0 right-0 h-full w-[300px] bg-white shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col",
+            "absolute top-0 right-0 h-full w-[310px] bg-white shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col overflow-hidden",
             isOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <div className="flex items-center justify-between p-6 pb-4 shrink-0">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-              Navigation
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
+          {/* Drawer top accent */}
+          <div className="h-[3px] w-full bg-gradient-to-r from-red-600 via-zinc-900 to-red-600 shrink-0" />
+
+          {/* Drawer header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-100 shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="bg-red-600 p-2 rounded-lg shadow-sm">
+                <SparklesIcon className="text-white h-4 w-4 fill-white/20" />
+              </div>
+              <div>
+                <span className="text-sm font-black text-zinc-900 italic uppercase tracking-tight">
+                  Vidi<span className="text-red-600">Flow</span>
+                </span>
+                <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest">
+                  Creator Toolbox
+                </p>
+              </div>
+            </div>
+            <button
               onClick={() => setIsOpen(false)}
-              className="rounded-full"
+              className="h-9 w-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center hover:bg-zinc-100 transition-colors"
             >
-              <XIcon className="h-5 w-5 text-zinc-500" />
-            </Button>
+              <XIcon className="h-4 w-4 text-zinc-500" />
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-5">
-            {/* BLOG IN MOBILE */}
+          {/* Drawer body */}
+          <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+            {/* Resources */}
             <div>
               <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.25em] mb-2 px-1">
                 Resources
@@ -422,19 +479,22 @@ const Navbar = () => {
               <Link
                 href="/blog"
                 className={cn(
-                  "flex items-center justify-between p-3.5 rounded-2xl transition-all active:scale-95",
+                  "flex items-center justify-between p-4 rounded-[18px] transition-all active:scale-95 group relative overflow-hidden",
                   pathname === "/blog" || pathname.startsWith("/blog/")
                     ? "bg-zinc-900 text-white"
-                    : "bg-zinc-50 text-zinc-700",
+                    : "bg-zinc-50 border border-zinc-100 text-zinc-700 hover:border-zinc-200",
                 )}
               >
-                <div className="flex items-center gap-3">
+                {!(pathname === "/blog" || pathname.startsWith("/blog/")) && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[18px]" />
+                )}
+                <div className="flex items-center gap-3 relative z-10">
                   <div
                     className={cn(
-                      "p-2 rounded-xl shadow-sm",
+                      "p-2 rounded-xl",
                       pathname === "/blog" || pathname.startsWith("/blog/")
                         ? "bg-white/10"
-                        : "bg-white",
+                        : "bg-white border border-zinc-100",
                     )}
                   >
                     <BookOpenIcon
@@ -442,15 +502,27 @@ const Navbar = () => {
                         "h-4 w-4",
                         pathname === "/blog" || pathname.startsWith("/blog/")
                           ? "text-white"
-                          : "text-green-600",
+                          : "text-green-500",
                       )}
                     />
                   </div>
-                  <span className="font-bold uppercase text-xs tracking-tight">
-                    Blog
-                  </span>
+                  <div>
+                    <span className="font-black uppercase text-xs tracking-tight">
+                      Blog & Guides
+                    </span>
+                    <p
+                      className={cn(
+                        "text-[9px] font-bold uppercase tracking-widest mt-0.5",
+                        pathname === "/blog" || pathname.startsWith("/blog/")
+                          ? "text-zinc-400"
+                          : "text-zinc-400",
+                      )}
+                    >
+                      Tips & tutorials
+                    </p>
+                  </div>
                 </div>
-                <ChevronRightIcon className="h-4 w-4 opacity-40 shrink-0" />
+                <ChevronRightIcon className="h-4 w-4 opacity-30 shrink-0 relative z-10" />
               </Link>
             </div>
 
@@ -462,63 +534,83 @@ const Navbar = () => {
                 <div className="space-y-1.5">
                   {navLinks
                     .filter((l) => l.group === group)
-                    .map((link) => (
-                      <Link
-                        key={link.name}
-                        href={link.href}
-                        className={cn(
-                          "flex items-center justify-between p-3.5 rounded-2xl transition-all active:scale-95",
-                          pathname === link.href
-                            ? "bg-zinc-900 text-white"
-                            : "bg-zinc-50 text-zinc-700",
-                        )}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "p-2 rounded-xl shadow-sm",
-                              pathname === link.href
-                                ? "bg-white/10"
-                                : "bg-white",
-                            )}
-                          >
-                            <link.icon
+                    .map((link) => {
+                      const active = pathname === link.href;
+                      return (
+                        <Link
+                          key={link.name}
+                          href={link.href}
+                          className={cn(
+                            "flex items-center justify-between p-3.5 rounded-[16px] transition-all active:scale-95 group relative overflow-hidden",
+                            active
+                              ? "bg-zinc-900 text-white"
+                              : "bg-zinc-50 border border-zinc-100 text-zinc-700 hover:border-zinc-200",
+                          )}
+                        >
+                          {!active && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[16px]" />
+                          )}
+                          <div className="flex items-center gap-3 relative z-10">
+                            <div
                               className={cn(
-                                "h-4 w-4",
-                                pathname === link.href
-                                  ? "text-white"
-                                  : link.color,
-                              )}
-                            />
-                          </div>
-                          <span className="font-bold uppercase text-xs tracking-tight">
-                            {link.name}
-                          </span>
-                          {link.comingSoon && (
-                            <span
-                              className={cn(
-                                "text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none",
-                                pathname === link.href
-                                  ? "bg-white/20 text-white"
-                                  : "bg-amber-100 text-amber-600",
+                                "p-2 rounded-xl shrink-0",
+                                active
+                                  ? "bg-white/10"
+                                  : cn(
+                                      "bg-white border border-zinc-100",
+                                      link.bg
+                                        .replace("bg-", "border-")
+                                        .replace("-50", "-100/50"),
+                                    ),
                               )}
                             >
-                              Soon
-                            </span>
-                          )}
-                        </div>
-                        <ChevronRightIcon className="h-4 w-4 opacity-40 shrink-0" />
-                      </Link>
-                    ))}
+                              <link.icon
+                                className={cn(
+                                  "h-4 w-4",
+                                  active ? "text-white" : link.color,
+                                )}
+                              />
+                            </div>
+                            <div>
+                              <span className="font-black uppercase text-xs tracking-tight">
+                                {link.name}
+                              </span>
+                              {link.comingSoon && (
+                                <span
+                                  className={cn(
+                                    "ml-2 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none",
+                                    active
+                                      ? "bg-white/20 text-white"
+                                      : "bg-amber-100 text-amber-600",
+                                  )}
+                                >
+                                  Soon
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <ChevronRightIcon className="h-4 w-4 opacity-30 shrink-0 relative z-10" />
+                        </Link>
+                      );
+                    })}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-zinc-100 p-6 text-center shrink-0">
-            <p className="text-[10px] font-black uppercase text-zinc-300 tracking-[0.3em]">
-              VidiFlow Pro
-            </p>
+          {/* Drawer footer — mirrors homepage bottom CTA */}
+          <div className="border-t border-zinc-100 p-5 shrink-0 bg-zinc-50">
+            <Link href="/explore-tools" onClick={() => setIsOpen(false)}>
+              <button className="w-full h-12 bg-zinc-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all shadow-md shadow-zinc-300/40 border border-zinc-800">
+                Explore All Tools <ArrowRightIcon className="h-3.5 w-3.5" />
+              </button>
+            </Link>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[9px] font-black text-green-700 uppercase tracking-widest">
+                12+ Tools Active
+              </span>
+            </div>
           </div>
         </div>
       </div>

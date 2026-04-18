@@ -1,4 +1,4 @@
-// app/api/youtube-audio/route.js
+// app/api/instagram-video/route.js
 import { NextResponse } from "next/server";
 
 const RENDER_URL = process.env.YTDLP_API_URL || "";
@@ -12,11 +12,11 @@ export async function POST(req) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
     if (!RENDER_URL)
       return NextResponse.json(
-        { error: "Audio service not configured." },
+        { error: "Media service not configured." },
         { status: 500 },
       );
 
-    const renderRes = await fetch(`${RENDER_URL}/youtube/audio`, {
+    const renderRes = await fetch(`${RENDER_URL}/instagram/video`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,10 +37,11 @@ export async function POST(req) {
 
     const disposition =
       renderRes.headers.get("Content-Disposition") ||
-      'attachment; filename="audio.mp3"';
+      'attachment; filename="instagram-video.mp4"';
     const contentLength = renderRes.headers.get("Content-Length");
+
     const headers = new Headers({
-      "Content-Type": "audio/mpeg",
+      "Content-Type": "video/mp4",
       "Content-Disposition": disposition,
     });
     if (contentLength) headers.set("Content-Length", contentLength);
