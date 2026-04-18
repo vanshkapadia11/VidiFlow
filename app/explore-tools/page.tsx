@@ -296,7 +296,7 @@ export default function ExploreFeatures() {
         {/* ─── TOOLS GRID ───────────────────────────────────────────── */}
         <section className="max-w-7xl mx-auto px-6 pb-24">
           {/* Section label — mirrors homepage tool grid header */}
-          <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-start mb-10 gap-4">
             <div className="space-y-1">
               <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
                 Everything You Need

@@ -95,18 +95,70 @@ export default function EnhancedTagGenerator() {
 
       <main className="max-w-6xl mx-auto p-6 lg:py-16 antialiased">
         {/* HERO HEADER */}
+        {/* HERO HEADER */}
         <div className="flex flex-col items-center text-center mb-12">
-          <Badge className="mb-4 bg-zinc-900 text-white hover:bg-zinc-800 rounded-full px-4 py-1 text-[10px] font-black tracking-widest uppercase">
-            SEO Engine v4.0
-          </Badge>
-          <h1 className="text-5xl font-black tracking-tighter text-zinc-900 italic uppercase sm:text-6xl">
-            Viral<span className="text-red-600">Tags.</span>
-          </h1>
-          <p className="mt-4 text-zinc-500 font-bold uppercase text-[10px] tracking-[0.3em]">
-            Optimized for the 2026 YouTube Algorithm
-          </p>
-        </div>
+          <div className="flex items-center gap-2 mb-5">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-full shadow-sm">
+              <span className="flex items-center justify-center w-4 h-4 rounded-full bg-red-600">
+                <SparklesIcon className="h-2.5 w-2.5 text-white fill-white" />
+              </span>
+              <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                SEO Engine v4.0
+              </span>
+            </div>
+            <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-1">
+              <div className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
+              2026 Algorithm
+            </span>
+          </div>
 
+          <h1 className="text-[clamp(3rem,9vw,7rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+            Viral
+            <span className="relative inline-block">
+              <span className="text-red-600">Tags.</span>
+              <svg
+                className="absolute -bottom-2 left-0 w-full"
+                viewBox="0 0 120 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 6 Q30 2 60 4 Q90 6 118 2"
+                  stroke="#ef4444"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.4"
+                />
+              </svg>
+            </span>
+          </h1>
+
+          <p className="mt-5 text-zinc-500 font-medium text-base leading-relaxed max-w-md">
+            Generate high-ranking SEO tags using our AI engine — optimized for
+            the 2026 YouTube algorithm.
+          </p>
+
+          <div className="grid grid-cols-4 gap-3 mt-8 max-w-lg w-full">
+            {[
+              { value: "AI", label: "Powered" },
+              { value: "SEO", label: "Optimized" },
+              { value: "99+", label: "Tags" },
+              { value: "Free", label: "Forever" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center justify-center py-3 px-2 bg-white rounded-2xl border border-zinc-200/80 shadow-sm"
+              >
+                <span className="text-lg font-[900] italic text-zinc-900 leading-none">
+                  {s.value}
+                </span>
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.15em] mt-1">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
         {/* SEARCH CONSOLE */}
         <div className="max-w-3xl mx-auto mb-20">
           <form onSubmit={generateResults} className="relative group">

@@ -110,29 +110,69 @@ export default function TikTokDownloader() {
         {/* ── HEADER ── */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge className="bg-zinc-100 text-zinc-600 border-none text-[10px] font-bold uppercase rounded-full px-3">
-                TikSave v4.0
-              </Badge>
-              <span className="text-zinc-300">|</span>
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-full shadow-sm">
+                <span className="flex items-center justify-center w-4 h-4 rounded-full bg-zinc-900">
+                  <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-white">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z" />
+                  </svg>
+                </span>
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                  TikSave v4.0
+                </span>
+              </div>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-1">
+                <div className="h-1 w-1 rounded-full bg-green-500 animate-pulse" />
                 No Watermark · HD
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 italic uppercase">
-              TikSave<span className="text-red-600">.</span>
+
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+              Tik
+              <span className="relative inline-block">
+                <span className="text-red-600">Save.</span>
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 120 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 6 Q30 2 60 4 Q90 6 118 2"
+                    stroke="#ef4444"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.4"
+                  />
+                </svg>
+              </span>
             </h1>
+
+            <p className="mt-4 max-w-md text-zinc-500 font-medium text-base leading-relaxed">
+              Download any public TikTok video without watermarks — HD quality,
+              instant, no login needed.
+            </p>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-zinc-400 border-l border-zinc-200 pl-6">
-            <div>
-              <p className="text-[10px] font-bold uppercase mb-0.5 tracking-tighter">
-                Output Format
-              </p>
-              <p className="text-sm font-bold text-zinc-600">
-                MP4 · No Watermark
-              </p>
-            </div>
+
+          <div className="grid grid-cols-2 gap-3 shrink-0">
+            {[
+              { value: "HD", label: "Quality" },
+              { value: "MP4", label: "Format" },
+              { value: "0", label: "Watermarks" },
+              { value: "Free", label: "Forever" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center justify-center py-3 px-4 bg-white rounded-2xl border border-zinc-200/80 shadow-sm"
+              >
+                <span className="text-xl font-[900] italic text-zinc-900 leading-none">
+                  {s.value}
+                </span>
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.15em] mt-1">
+                  {s.label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

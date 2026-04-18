@@ -95,27 +95,74 @@ export default function PinterestDownloader() {
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge className="bg-red-50 text-red-600 border-none text-[10px] font-bold uppercase rounded-full px-3">
-                PinSave Pro
-              </Badge>
-              <span className="text-zinc-300">|</span>
-              <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-full shadow-sm">
+                <span
+                  className="flex items-center justify-center w-4 h-4 rounded-full"
+                  style={{
+                    background: "linear-gradient(135deg, #e60023, #ad081b)",
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-white">
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
+                  </svg>
+                </span>
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                  PinSave Pro
+                </span>
+              </div>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-1">
+                <div className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
                 Images &amp; Videos
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 italic uppercase">
-              PinSave<span className="text-red-600">.</span>
+
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+              Pin
+              <span className="relative inline-block">
+                <span className="text-red-600">Save.</span>
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 100 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 6 Q25 2 50 4 Q75 6 98 2"
+                    stroke="#e60023"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.45"
+                  />
+                </svg>
+              </span>
             </h1>
+
+            <p className="mt-4 max-w-md text-zinc-500 font-medium text-base leading-relaxed">
+              Download Pinterest images and videos in original quality — JPG,
+              PNG, MP4, no login needed.
+            </p>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-zinc-400 border-l border-zinc-200 pl-6">
-            <div>
-              <p className="text-[10px] font-bold uppercase mb-0.5 tracking-tighter">
-                Output Format
-              </p>
-              <p className="text-sm font-bold text-zinc-600">MP4 · JPG · PNG</p>
-            </div>
+
+          <div className="grid grid-cols-2 gap-3 shrink-0">
+            {[
+              { value: "4K", label: "Max Quality" },
+              { value: "JPG", label: "Images" },
+              { value: "MP4", label: "Videos" },
+              { value: "Free", label: "Forever" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center justify-center py-3 px-4 bg-white rounded-2xl border border-zinc-200/80 shadow-sm"
+              >
+                <span className="text-xl font-[900] italic text-zinc-900 leading-none">
+                  {s.value}
+                </span>
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.15em] mt-1">
+                  {s.label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
