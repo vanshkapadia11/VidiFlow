@@ -94,9 +94,11 @@ export default async function BlogPostPage({
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-black uppercase italic text-zinc-900 leading-tight">
+          <h1 className="text-[clamp(2.2rem,6vw,4.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
             {post.title}
-            <span className="text-red-600">.</span>
+            <span className="relative inline-block ml-2">
+              <span className="text-red-600">.</span>
+            </span>
           </h1>
 
           <p className="text-zinc-500 text-base leading-relaxed max-w-2xl">
