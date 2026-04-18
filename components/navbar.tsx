@@ -20,7 +20,6 @@ import {
   ArrowRightIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const navLinks = [
   {
@@ -196,11 +195,11 @@ const Navbar = () => {
   }, []);
 
   const groups = Array.from(new Set(navLinks.map((l) => l.group)));
+  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
 
   return (
     <>
       <header className="sticky top-0 z-[100] w-full">
-        {/* Top accent bar — matches hero color palette */}
         <div className="h-[3px] w-full bg-gradient-to-r from-red-600 via-zinc-900 to-red-600" />
 
         <nav className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md shadow-sm shadow-zinc-100/60">
@@ -211,7 +210,6 @@ const Navbar = () => {
               className="flex items-center gap-3 active:scale-95 transition-transform shrink-0 group"
             >
               <div className="relative">
-                {/* Glow behind icon — mirrors hero blobs */}
                 <div className="absolute inset-0 bg-red-400/30 blur-md rounded-xl scale-125 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative bg-red-600 p-2.5 rounded-xl shadow-lg shadow-red-200">
                   <SparklesIcon className="text-white h-5 w-5 fill-white/20" />
@@ -232,31 +230,38 @@ const Navbar = () => {
               {navLinks
                 .filter((l) => desktopPrimary.includes(l.name))
                 .map((link) => {
-                  const active = pathname === link.href;
+                  const active = pathname.startsWith(link.href);
                   return (
                     <Link
                       key={link.name}
                       href={link.href}
                       className={cn(
-                        "relative px-3.5 py-2 text-[10px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap group",
+                        "relative px-3.5 py-2 text-[10px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap overflow-hidden",
                         active
-                          ? "bg-zinc-900 text-white shadow-md"
+                          ? "bg-red-600 text-white shadow-lg shadow-red-200/70"
                           : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border border-transparent hover:border-zinc-200/60",
                       )}
                     >
-                      {/* Active left bar — mirrors tool card hover accent */}
+                      {/* Subtle shine on active pill */}
                       {active && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-red-500 rounded-full" />
+                        <span className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none" />
                       )}
                       <link.icon
                         className={cn(
-                          "h-3.5 w-3.5 shrink-0",
-                          active ? "text-red-400" : link.color,
+                          "h-3.5 w-3.5 shrink-0 relative z-10",
+                          active ? "text-white" : link.color,
                         )}
                       />
-                      {link.name}
+                      <span className="relative z-10">{link.name}</span>
                       {link.comingSoon && (
-                        <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 leading-none">
+                        <span
+                          className={cn(
+                            "relative z-10 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none",
+                            active
+                              ? "bg-white/25 text-white"
+                              : "bg-amber-100 text-amber-600",
+                          )}
+                        >
                           Soon
                         </span>
                       )}
@@ -264,21 +269,26 @@ const Navbar = () => {
                   );
                 })}
 
-              {/* Blog link */}
+              {/* Blog */}
               <Link
                 href="/blog"
                 className={cn(
-                  "relative px-3.5 py-2 text-[11px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap",
-                  pathname === "/blog" || pathname.startsWith("/blog/")
-                    ? "bg-zinc-900 text-white shadow-md"
+                  "relative px-3.5 py-2 text-[10px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all whitespace-nowrap overflow-hidden",
+                  isBlog
+                    ? "bg-red-600 text-white shadow-lg shadow-red-200/70"
                     : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border border-transparent hover:border-zinc-200/60",
                 )}
               >
-                {(pathname === "/blog" || pathname.startsWith("/blog/")) && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-red-500 rounded-full" />
+                {isBlog && (
+                  <span className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none" />
                 )}
-                <BookOpenIcon className="h-3.5 w-3.5 text-green-500" />
-                Blog
+                <BookOpenIcon
+                  className={cn(
+                    "h-3.5 w-3.5 relative z-10",
+                    isBlog ? "text-white" : "text-green-500",
+                  )}
+                />
+                <span className="relative z-10">Blog</span>
               </Link>
 
               {/* More dropdown */}
@@ -286,7 +296,7 @@ const Navbar = () => {
                 <button
                   onClick={() => setShowMore((v) => !v)}
                   className={cn(
-                    "px-3.5 py-2 text-[11px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all border",
+                    "px-3.5 py-2 text-[10px] font-black rounded-xl flex items-center gap-1.5 uppercase tracking-widest transition-all border",
                     showMore
                       ? "bg-zinc-900 text-white border-zinc-800 shadow-md"
                       : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border-transparent hover:border-zinc-200/60",
@@ -305,14 +315,11 @@ const Navbar = () => {
                   <div
                     className={cn(
                       "absolute top-full right-0 mt-3 bg-white rounded-[24px] shadow-2xl shadow-zinc-200/80 border border-zinc-100/80 p-6 z-[200]",
-                      "w-[580px] max-w-[calc(100vw-48px)]",
-                      "max-h-[calc(100vh-120px)] overflow-y-auto",
-                      "[&::-webkit-scrollbar]:w-1.5",
-                      "[&::-webkit-scrollbar-track]:bg-transparent",
+                      "w-[580px] max-w-[calc(100vw-48px)] max-h-[calc(100vh-120px)] overflow-y-auto",
+                      "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent",
                       "[&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full",
                     )}
                   >
-                    {/* Dropdown header — mirrors section headings */}
                     <div className="flex items-center justify-between mb-5 pb-4 border-b border-zinc-100">
                       <div>
                         <p className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.25em]">
@@ -348,18 +355,20 @@ const Navbar = () => {
                                     className={cn(
                                       "group flex items-center gap-3 px-3 py-2.5 rounded-[14px] transition-all text-[11px] font-black uppercase tracking-wider relative overflow-hidden",
                                       active
-                                        ? "bg-zinc-900 text-white"
-                                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                                        ? "bg-red-600 text-white"
+                                        : "text-zinc-600 hover:text-zinc-900",
                                     )}
                                   >
-                                    {/* Hover fill — mirrors tool card */}
                                     {!active && (
                                       <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[14px]" />
+                                    )}
+                                    {active && (
+                                      <span className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none" />
                                     )}
                                     <div
                                       className={cn(
                                         "p-1.5 rounded-lg shrink-0 relative z-10",
-                                        active ? "bg-white/10" : link.bg,
+                                        active ? "bg-white/20" : link.bg,
                                       )}
                                     >
                                       <link.icon
@@ -377,7 +386,7 @@ const Navbar = () => {
                                         className={cn(
                                           "text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none shrink-0 relative z-10",
                                           active
-                                            ? "bg-white/20 text-white"
+                                            ? "bg-white/25 text-white"
                                             : "bg-amber-100 text-amber-600",
                                         )}
                                       >
@@ -427,7 +436,6 @@ const Navbar = () => {
           isOpen ? "visible" : "invisible",
         )}
       >
-        {/* Backdrop */}
         <div
           className={cn(
             "absolute inset-0 bg-zinc-950/50 backdrop-blur-md transition-opacity duration-300",
@@ -436,17 +444,14 @@ const Navbar = () => {
           onClick={() => setIsOpen(false)}
         />
 
-        {/* Drawer panel */}
         <div
           className={cn(
             "absolute top-0 right-0 h-full w-[310px] bg-white shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col overflow-hidden",
             isOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          {/* Drawer top accent */}
           <div className="h-[3px] w-full bg-gradient-to-r from-red-600 via-zinc-900 to-red-600 shrink-0" />
 
-          {/* Drawer header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-100 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="bg-red-600 p-2 rounded-lg shadow-sm">
@@ -469,9 +474,8 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Drawer body */}
           <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-            {/* Resources */}
+            {/* Blog */}
             <div>
               <p className="text-[9px] font-black text-zinc-300 uppercase tracking-[0.25em] mb-2 px-1">
                 Resources
@@ -480,29 +484,30 @@ const Navbar = () => {
                 href="/blog"
                 className={cn(
                   "flex items-center justify-between p-4 rounded-[18px] transition-all active:scale-95 group relative overflow-hidden",
-                  pathname === "/blog" || pathname.startsWith("/blog/")
-                    ? "bg-zinc-900 text-white"
+                  isBlog
+                    ? "bg-red-600 text-white shadow-md shadow-red-100"
                     : "bg-zinc-50 border border-zinc-100 text-zinc-700 hover:border-zinc-200",
                 )}
               >
-                {!(pathname === "/blog" || pathname.startsWith("/blog/")) && (
+                {!isBlog && (
                   <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[18px]" />
+                )}
+                {isBlog && (
+                  <span className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none" />
                 )}
                 <div className="flex items-center gap-3 relative z-10">
                   <div
                     className={cn(
                       "p-2 rounded-xl",
-                      pathname === "/blog" || pathname.startsWith("/blog/")
-                        ? "bg-white/10"
+                      isBlog
+                        ? "bg-white/20"
                         : "bg-white border border-zinc-100",
                     )}
                   >
                     <BookOpenIcon
                       className={cn(
                         "h-4 w-4",
-                        pathname === "/blog" || pathname.startsWith("/blog/")
-                          ? "text-white"
-                          : "text-green-500",
+                        isBlog ? "text-white" : "text-green-500",
                       )}
                     />
                   </div>
@@ -513,16 +518,14 @@ const Navbar = () => {
                     <p
                       className={cn(
                         "text-[9px] font-bold uppercase tracking-widest mt-0.5",
-                        pathname === "/blog" || pathname.startsWith("/blog/")
-                          ? "text-zinc-400"
-                          : "text-zinc-400",
+                        isBlog ? "text-red-200" : "text-zinc-400",
                       )}
                     >
                       Tips & tutorials
                     </p>
                   </div>
                 </div>
-                <ChevronRightIcon className="h-4 w-4 opacity-30 shrink-0 relative z-10" />
+                <ChevronRightIcon className="h-4 w-4 opacity-40 shrink-0 relative z-10" />
               </Link>
             </div>
 
@@ -543,25 +546,23 @@ const Navbar = () => {
                           className={cn(
                             "flex items-center justify-between p-3.5 rounded-[16px] transition-all active:scale-95 group relative overflow-hidden",
                             active
-                              ? "bg-zinc-900 text-white"
+                              ? "bg-red-600 text-white shadow-md shadow-red-100"
                               : "bg-zinc-50 border border-zinc-100 text-zinc-700 hover:border-zinc-200",
                           )}
                         >
                           {!active && (
                             <div className="absolute inset-0 bg-gradient-to-r from-red-50/0 to-red-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-[16px]" />
                           )}
+                          {active && (
+                            <span className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none" />
+                          )}
                           <div className="flex items-center gap-3 relative z-10">
                             <div
                               className={cn(
                                 "p-2 rounded-xl shrink-0",
                                 active
-                                  ? "bg-white/10"
-                                  : cn(
-                                      "bg-white border border-zinc-100",
-                                      link.bg
-                                        .replace("bg-", "border-")
-                                        .replace("-50", "-100/50"),
-                                    ),
+                                  ? "bg-white/20"
+                                  : "bg-white border border-zinc-100",
                               )}
                             >
                               <link.icon
@@ -580,7 +581,7 @@ const Navbar = () => {
                                   className={cn(
                                     "ml-2 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full leading-none",
                                     active
-                                      ? "bg-white/20 text-white"
+                                      ? "bg-white/25 text-white"
                                       : "bg-amber-100 text-amber-600",
                                   )}
                                 >
@@ -589,7 +590,7 @@ const Navbar = () => {
                               )}
                             </div>
                           </div>
-                          <ChevronRightIcon className="h-4 w-4 opacity-30 shrink-0 relative z-10" />
+                          <ChevronRightIcon className="h-4 w-4 opacity-40 shrink-0 relative z-10" />
                         </Link>
                       );
                     })}
@@ -598,7 +599,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Drawer footer — mirrors homepage bottom CTA */}
           <div className="border-t border-zinc-100 p-5 shrink-0 bg-zinc-50">
             <Link href="/explore-tools" onClick={() => setIsOpen(false)}>
               <button className="w-full h-12 bg-zinc-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all shadow-md shadow-zinc-300/40 border border-zinc-800">

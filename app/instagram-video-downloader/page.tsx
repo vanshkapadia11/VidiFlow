@@ -1,9 +1,8 @@
 import React from "react";
-import CreatorFooter from "@/components/footer";
 import { Metadata } from "next";
 import PageContent from "@/components/pageContent";
-// import YouTubeDownloaderComingSoon from "./YoutubeVideoDownloader";
 import InstagramDownloaderComingSoon from "./InstaVideoDownloader";
+import InstagramWaitlist from "./InstagramWaitlist";
 import { instagramContent } from "@/lib/page-content";
 
 export const metadata: Metadata = {
@@ -35,11 +34,13 @@ export const metadata: Metadata = {
   },
 };
 
+const isEnabled = process.env.NEXT_PUBLIC_INSTAGRAM_ENABLED === "true";
+
 const InstaVideoDownloaderPage = () => {
   return (
     <>
       <main>
-        <InstagramDownloaderComingSoon />
+        {isEnabled ? <InstagramDownloaderComingSoon /> : <InstagramWaitlist />}
       </main>
       <PageContent
         description={instagramContent.description}

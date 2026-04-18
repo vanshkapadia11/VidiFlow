@@ -11,12 +11,17 @@ import {
   SearchIcon,
   ClockIcon,
   UserIcon,
+  ShieldCheckIcon,
+  AlertTriangleIcon,
+  InfoIcon,
+  ChevronDownIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/navbar";
+import CreatorFooter from "@/components/footer";
 
 interface VideoInfo {
   title: string;
@@ -40,11 +45,36 @@ function formatDuration(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+const faqs = [
+  {
+    q: "Is it legal to download YouTube audio?",
+    a: "Downloading YouTube content without permission from the copyright holder may violate YouTube's Terms of Service (Section 5) and applicable copyright laws. VidiFlow is intended solely for content you own, have explicit permission to download, or that is in the public domain. Always verify you have the right to download before using this tool.",
+  },
+  {
+    q: "Can I use this to download music / copyrighted songs?",
+    a: "No. Downloading copyrighted music, songs, podcasts, or any audio content without authorization from the rights holder is illegal in most jurisdictions and violates YouTube's ToS. This tool is designed for personal use cases such as your own uploads, Creative Commons licensed content, or public domain recordings.",
+  },
+  {
+    q: "Does VidiFlow store or cache my downloads?",
+    a: "No. VidiFlow does not store, cache, or retain any downloaded audio files on our servers. All processing happens transiently and the file is delivered directly to your browser. We do not log video IDs or user data associated with downloads.",
+  },
+  {
+    q: "What formats and quality does this support?",
+    a: "This tool extracts audio in MP3 format at 192kbps. This is suitable for most personal listening use cases. If you need higher bitrate or lossless audio, please use official platform options.",
+  },
+  {
+    q: "Why might a download fail or be unavailable?",
+    a: "Downloads may fail for age-restricted videos, region-locked content, live streams, private videos, or videos that have been removed. Platform changes on YouTube's end may also temporarily affect availability.",
+  },
+];
+
 export default function YouTubeAudioDownloader() {
   const [url, setUrl] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMsg, setErrorMsg] = React.useState("");
   const [videoInfo, setVideoInfo] = React.useState<VideoInfo | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
+  const [openFaq, setOpenFaq] = React.useState<number | null>(null);
 
   const isValidYouTubeUrl = (val: string) =>
     /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/.test(
@@ -53,6 +83,13 @@ export default function YouTubeAudioDownloader() {
 
   const handleFetchInfo = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptedTerms) {
+      setErrorMsg(
+        "Please confirm you agree to our usage policy before continuing.",
+      );
+      setStatus("error");
+      return;
+    }
     if (!url.trim() || !isValidYouTubeUrl(url)) {
       setErrorMsg("Please enter a valid YouTube URL.");
       setStatus("error");
@@ -131,7 +168,7 @@ export default function YouTubeAudioDownloader() {
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
-        {/* HEADER */}
+        {/* ── HEADER ── */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -151,17 +188,38 @@ export default function YouTubeAudioDownloader() {
               AudioRip<span className="text-red-600">.</span>
             </h1>
             <p className="text-zinc-400 text-sm mt-1">
-              YouTube → MP3 at 192kbps. Paste, click, download.
+              YouTube → MP3 at 192kbps. For personal &amp; permitted use only.
             </p>
           </div>
         </div>
 
+        {/* ── LEGAL NOTICE BANNER ── */}
+        <div className="mb-8 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200/80 rounded-2xl">
+          <AlertTriangleIcon className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-800 leading-relaxed font-medium">
+            <span className="font-black uppercase">Important:</span> This tool
+            is intended only for downloading content you own, have explicit
+            permission to use, or that is licensed under Creative Commons /
+            public domain. Downloading copyrighted music, videos, or other
+            protected content without authorization may violate{" "}
+            <a
+              href="https://www.youtube.com/t/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-amber-900"
+            >
+              YouTube's Terms of Service
+            </a>{" "}
+            and applicable copyright law. VidiFlow is not responsible for misuse
+            of this tool.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* ── LEFT — input + how it works ── */}
+          {/* ── LEFT — input + info ── */}
           <div className="lg:col-span-4 space-y-5">
             <Card className="border-zinc-200/60 shadow-sm rounded-[24px] bg-white overflow-hidden">
               <CardContent className="p-6 space-y-5">
-                {/* Header */}
                 <div className="flex items-center gap-2">
                   <div className="bg-red-50 p-2 rounded-lg">
                     <MusicIcon className="h-4 w-4 text-red-500" />
@@ -171,7 +229,6 @@ export default function YouTubeAudioDownloader() {
                   </span>
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleFetchInfo} className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">
@@ -196,7 +253,49 @@ export default function YouTubeAudioDownloader() {
                     </div>
                   </div>
 
-                  {/* Error */}
+                  {/* Terms checkbox — required before download */}
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <div className="relative mt-0.5 shrink-0">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      />
+                      <div
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${acceptedTerms ? "bg-red-600 border-red-600" : "border-zinc-300 bg-white group-hover:border-zinc-400"}`}
+                      >
+                        {acceptedTerms && (
+                          <svg
+                            className="w-2.5 h-2.5 text-white"
+                            viewBox="0 0 10 10"
+                            fill="none"
+                          >
+                            <path
+                              d="M1.5 5L4 7.5L8.5 2.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 leading-relaxed">
+                      I confirm I have the right to download this content and
+                      agree to VidiFlow's{" "}
+                      <a
+                        href="/terms"
+                        className="text-red-600 underline underline-offset-2 hover:text-red-700"
+                      >
+                        Terms of Use
+                      </a>
+                      . I will not use this tool to download copyrighted content
+                      without permission.
+                    </span>
+                  </label>
+
                   {status === "error" && (
                     <div className="flex items-start gap-2 p-3 bg-red-50 rounded-xl border border-red-100">
                       <AlertCircleIcon className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
@@ -206,12 +305,11 @@ export default function YouTubeAudioDownloader() {
                     </div>
                   )}
 
-                  {/* Fetch button */}
                   {(status === "idle" || status === "error") && (
                     <Button
                       type="submit"
-                      disabled={!url}
-                      className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-zinc-200 disabled:opacity-60"
+                      disabled={!url || !acceptedTerms}
+                      className="w-full h-12 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-zinc-200 disabled:opacity-40"
                     >
                       <span className="flex items-center gap-2">
                         <SearchIcon className="h-3.5 w-3.5" />
@@ -232,7 +330,6 @@ export default function YouTubeAudioDownloader() {
                     </Button>
                   )}
 
-                  {/* Show a locked state while video is loaded */}
                   {(status === "ready" ||
                     status === "downloading" ||
                     status === "success") && (
@@ -269,14 +366,50 @@ export default function YouTubeAudioDownloader() {
                 </div>
                 <div className="flex gap-2.5">
                   <span className="text-red-500 font-black">2.</span>
-                  <span>Hit Fetch Info — preview the video details.</span>
+                  <span>Confirm you have rights to the content.</span>
                 </div>
                 <div className="flex gap-2.5">
                   <span className="text-red-500 font-black">3.</span>
+                  <span>Hit Fetch Info — preview the video details.</span>
+                </div>
+                <div className="flex gap-2.5">
+                  <span className="text-red-500 font-black">4.</span>
                   <span>Click Download MP3 on the right panel.</span>
                 </div>
                 <p className="text-zinc-500 pt-1 text-[10px]">
                   Large videos can take up to 60 seconds. Please wait.
+                </p>
+              </div>
+            </div>
+
+            {/* Permitted use card */}
+            <div className="p-5 bg-white border border-zinc-200/60 rounded-2xl space-y-3">
+              <div className="flex items-center gap-2 text-green-600">
+                <ShieldCheckIcon className="h-3.5 w-3.5" />
+                <span className="text-[10px] font-black uppercase tracking-widest">
+                  Permitted Use Only
+                </span>
+              </div>
+              <ul className="space-y-2 text-[11px] text-zinc-500 leading-relaxed">
+                {[
+                  "Your own uploaded videos",
+                  "Creative Commons licensed content",
+                  "Public domain recordings",
+                  "Content with explicit owner permission",
+                  "Videos you have purchased rights to",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-green-500 mt-0.5 shrink-0">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-1 border-t border-zinc-100">
+                <p className="text-[10px] text-zinc-400 leading-relaxed">
+                  Downloading copyrighted music, films, or other protected
+                  material without authorization is{" "}
+                  <span className="font-bold text-red-500">not permitted</span>{" "}
+                  and may result in legal liability.
                 </p>
               </div>
             </div>
@@ -285,7 +418,7 @@ export default function YouTubeAudioDownloader() {
           {/* ── RIGHT — preview + download ── */}
           <div className="lg:col-span-8">
             <Card className="border-zinc-200/60 shadow-xl shadow-zinc-200/20 rounded-[32px] overflow-hidden bg-white min-h-[520px] flex flex-col">
-              {/* DEFAULT — idle/error with no video */}
+              {/* DEFAULT idle */}
               {!videoInfo && status !== "fetching" && (
                 <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-8">
                   <div className="relative">
@@ -311,7 +444,8 @@ export default function YouTubeAudioDownloader() {
                       <span className="text-red-600">Extractor</span>
                     </h2>
                     <p className="text-zinc-400 text-sm leading-relaxed">
-                      Paste a YouTube URL on the left and hit{" "}
+                      Paste a YouTube URL on the left, confirm your usage
+                      rights, and hit{" "}
                       <span className="text-zinc-600 font-semibold">
                         Fetch Info
                       </span>{" "}
@@ -323,7 +457,7 @@ export default function YouTubeAudioDownloader() {
                       "192kbps MP3",
                       "YouTube Shorts",
                       "No Signup",
-                      "Free Forever",
+                      "Personal Use",
                     ].map((tag) => (
                       <div
                         key={tag}
@@ -336,13 +470,11 @@ export default function YouTubeAudioDownloader() {
                 </div>
               )}
 
-              {/* FETCHING — spinner */}
+              {/* FETCHING */}
               {status === "fetching" && (
                 <div className="flex-1 flex flex-col items-center justify-center gap-5 p-12 text-center">
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
-                      <Loader2Icon className="h-8 w-8 text-red-400 animate-spin" />
-                    </div>
+                  <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
+                    <Loader2Icon className="h-8 w-8 text-red-400 animate-spin" />
                   </div>
                   <div className="space-y-1">
                     <p className="text-zinc-700 text-sm font-bold">
@@ -355,13 +487,12 @@ export default function YouTubeAudioDownloader() {
                 </div>
               )}
 
-              {/* VIDEO READY — thumbnail + info + download */}
+              {/* VIDEO READY */}
               {videoInfo &&
                 (status === "ready" ||
                   status === "downloading" ||
                   status === "success") && (
                   <div className="flex-1 flex flex-col">
-                    {/* Thumbnail */}
                     <div className="relative w-full aspect-video bg-zinc-100 shrink-0">
                       <img
                         src={videoInfo.thumbnail}
@@ -369,7 +500,6 @@ export default function YouTubeAudioDownloader() {
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                      {/* Badges */}
                       <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
                           192kbps MP3
@@ -380,9 +510,7 @@ export default function YouTubeAudioDownloader() {
                       </div>
                     </div>
 
-                    {/* Info + download */}
                     <div className="flex-1 p-7 flex flex-col gap-5">
-                      {/* Title + meta */}
                       <div className="space-y-2.5">
                         <h2 className="text-xl font-black text-zinc-900 leading-snug line-clamp-2">
                           {videoInfo.title}
@@ -401,26 +529,34 @@ export default function YouTubeAudioDownloader() {
                         </div>
                       </div>
 
-                      {/* Pills */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-full">
-                          MP3
-                        </span>
-                        <span className="px-3 py-1 bg-zinc-100 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-full">
-                          192kbps
-                        </span>
-                        <span className="px-3 py-1 bg-zinc-100 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-full">
-                          No Watermark
-                        </span>
-                        <span className="px-3 py-1 bg-zinc-100 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-full">
-                          Free
-                        </span>
+                        {[
+                          "MP3",
+                          "192kbps",
+                          "No Watermark",
+                          "Personal Use Only",
+                        ].map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-3 py-1 bg-zinc-100 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
 
-                      {/* Spacer */}
+                      {/* Personal use reminder on ready state */}
+                      <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                        <InfoIcon className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
+                        <p className="text-xs text-blue-700 font-medium leading-relaxed">
+                          By downloading, you confirm this is for personal or
+                          permitted use only. Do not redistribute or use for
+                          commercial purposes without proper licensing.
+                        </p>
+                      </div>
+
                       <div className="flex-1" />
 
-                      {/* Status alerts */}
                       {status === "success" && (
                         <div className="flex items-center gap-2 p-3.5 bg-green-50 rounded-xl border border-green-100">
                           <CheckCircleIcon className="h-4 w-4 text-green-500 shrink-0" />
@@ -439,15 +575,13 @@ export default function YouTubeAudioDownloader() {
                         </div>
                       )}
 
-                      {/* Download button */}
                       {status === "ready" && (
                         <Button
                           onClick={handleDownload}
                           className="w-full h-13 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-red-100 py-4"
                         >
                           <span className="flex items-center gap-2">
-                            <DownloadIcon className="h-4 w-4" />
-                            Download MP3
+                            <DownloadIcon className="h-4 w-4" /> Download MP3
                           </span>
                         </Button>
                       )}
@@ -458,7 +592,7 @@ export default function YouTubeAudioDownloader() {
                           className="w-full py-4 bg-red-600 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest opacity-60"
                         >
                           <span className="flex items-center gap-2">
-                            <Loader2Icon className="h-4 w-4 animate-spin" />
+                            <Loader2Icon className="h-4 w-4 animate-spin" />{" "}
                             Converting… please wait
                           </span>
                         </Button>
@@ -470,13 +604,11 @@ export default function YouTubeAudioDownloader() {
                           className="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-red-100"
                         >
                           <span className="flex items-center gap-2">
-                            <DownloadIcon className="h-4 w-4" />
-                            Download Again
+                            <DownloadIcon className="h-4 w-4" /> Download Again
                           </span>
                         </Button>
                       )}
 
-                      {/* Reset */}
                       <button
                         onClick={handleReset}
                         className="w-full text-[10px] text-zinc-400 hover:text-zinc-600 transition-colors font-medium tracking-widest uppercase"
@@ -489,7 +621,110 @@ export default function YouTubeAudioDownloader() {
             </Card>
           </div>
         </div>
+
+        {/* ── FAQ / LEGAL SECTION ── */}
+        <section className="mt-20">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+                Legal & Usage
+              </p>
+              <h2 className="text-3xl font-black uppercase italic tracking-tight leading-tight">
+                Common <span className="text-red-600">Questions.</span>
+              </h2>
+            </div>
+            <p className="text-zinc-400 text-sm max-w-xs text-right hidden md:block">
+              Please read before using this tool.
+            </p>
+          </div>
+
+          <div className="space-y-3 max-w-3xl">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="bg-white border border-zinc-200/60 rounded-[20px] overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between p-5 text-left group"
+                >
+                  <span className="font-black text-sm uppercase tracking-tight text-zinc-800 group-hover:text-red-600 transition-colors pr-4">
+                    {faq.q}
+                  </span>
+                  <ChevronDownIcon
+                    className={`h-4 w-4 text-zinc-400 shrink-0 transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {openFaq === i && (
+                  <div className="px-5 pb-5 border-t border-zinc-100">
+                    <p className="text-zinc-500 text-sm leading-relaxed pt-4">
+                      {faq.a}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── DISCLAIMER FOOTER BLOCK ── */}
+        <section className="mt-16 p-8 bg-zinc-900 rounded-[32px] relative overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-[0.03] pointer-events-none"
+            style={{
+              backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center gap-2">
+              <ShieldCheckIcon className="h-4 w-4 text-red-500" />
+              <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
+                Legal Disclaimer
+              </span>
+            </div>
+            <p className="text-zinc-400 text-xs leading-relaxed max-w-4xl">
+              VidiFlow is an independent tool and is{" "}
+              <span className="text-white font-bold">
+                not affiliated with, endorsed by, or sponsored by YouTube,
+                Google LLC, or any of their subsidiaries.
+              </span>{" "}
+              All product names, logos, and brands are property of their
+              respective owners.
+            </p>
+            <p className="text-zinc-500 text-xs leading-relaxed max-w-4xl">
+              This tool is provided strictly for{" "}
+              <span className="text-zinc-300 font-semibold">
+                personal, non-commercial use
+              </span>{" "}
+              on content you own or have explicit rights to download.
+              Downloading, reproducing, or distributing copyrighted content
+              without authorization from the rights holder may constitute
+              copyright infringement under applicable law, including but not
+              limited to the Digital Millennium Copyright Act (DMCA) and the EU
+              Copyright Directive.
+            </p>
+            <p className="text-zinc-500 text-xs leading-relaxed max-w-4xl">
+              VidiFlow does not host, store, or distribute any copyrighted
+              content. We act solely as a technical intermediary and are not
+              liable for how users choose to use this tool. By using VidiFlow,
+              you agree to take full responsibility for ensuring your downloads
+              comply with applicable laws and platform terms.
+            </p>
+            <p className="text-zinc-600 text-[10px] leading-relaxed max-w-4xl pt-2 border-t border-zinc-800">
+              For DMCA notices or copyright concerns, please contact us at{" "}
+              <a
+                href="mailto:legal@vidiflow.co"
+                className="text-red-500 underline underline-offset-2 hover:text-red-400"
+              >
+                legal@vidiflow.co
+              </a>
+              . We respond to valid takedown requests within 48 hours.
+            </p>
+          </div>
+        </section>
       </main>
+      {/* <CreatorFooter /> */}
     </div>
   );
 }

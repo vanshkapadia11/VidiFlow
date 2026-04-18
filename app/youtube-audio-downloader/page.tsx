@@ -1,11 +1,9 @@
 import React from "react";
-import CreatorFooter from "@/components/footer";
 import { Metadata } from "next";
 import PageContent from "@/components/pageContent";
-// import YouTubeDownloaderComingSoon from "./YoutubeVideoDownloader";
-// import YouTubeAudioDownloader from "./YoutubeAudioDownloader";
-import { youtubeAudioContent } from "@/lib/page-content";
 import YouTubeAudioDownloader from "./YoutubeAudioDownloader";
+import YouTubeAudioWaitlist from "./YoutubeAudioWaitlist";
+import { youtubeAudioContent } from "@/lib/page-content";
 
 export const metadata: Metadata = {
   title: "YouTube to MP3 Converter — Download YouTube Audio Free",
@@ -36,11 +34,13 @@ export const metadata: Metadata = {
   },
 };
 
+const isEnabled = process.env.NEXT_PUBLIC_AUDIO_ENABLED === "true";
+
 const YoutubeAudioDownloadPage = () => {
   return (
     <>
       <main>
-        <YouTubeAudioDownloader />
+        {isEnabled ? <YouTubeAudioDownloader /> : <YouTubeAudioWaitlist />}
       </main>
       <PageContent
         description={youtubeAudioContent.description}

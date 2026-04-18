@@ -1,8 +1,8 @@
 import React from "react";
-import CreatorFooter from "@/components/footer";
 import { Metadata } from "next";
 import PageContent from "@/components/pageContent";
-import YouTubeDownloaderComingSoon from "./YoutubeVideoDownloader";
+import YouTubeVideoDownloader from "./YoutubeVideoDownloader";
+import YouTubeVideoWaitlist from "./YoutubeVideoWaitlist";
 import { youtubeVideoContent } from "@/lib/page-content";
 
 export const metadata: Metadata = {
@@ -34,11 +34,13 @@ export const metadata: Metadata = {
   },
 };
 
+const isEnabled = process.env.NEXT_PUBLIC_YOUTUBE_ENABLED === "true";
+
 const YoutubeDownloaderPage = () => {
   return (
     <>
       <main>
-        <YouTubeDownloaderComingSoon />
+        {isEnabled ? <YouTubeVideoDownloader /> : <YouTubeVideoWaitlist />}
       </main>
       <PageContent
         description={youtubeVideoContent.description}
