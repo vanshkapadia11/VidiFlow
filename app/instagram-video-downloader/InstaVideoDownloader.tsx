@@ -515,15 +515,6 @@ export default function InstaRipDownloader() {
                         </div>
                       )}
 
-                      {status === "error" && (
-                        <div className="flex items-start gap-2 p-3.5 bg-red-50 rounded-xl border border-red-100">
-                          <AlertCircleIcon className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
-                          <p className="text-xs text-red-600 font-medium">
-                            {errorMsg}
-                          </p>
-                        </div>
-                      )}
-
                       {/* Download button */}
                       {status === "ready" && (
                         <Button
