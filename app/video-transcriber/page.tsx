@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-// import VideoTranscriber from "";
 import PageContent from "@/components/pageContent";
 import { videoTranscriberContent } from "@/lib/page-content";
 import VideoTranscriber from "./videoTranscriber";
+import TranscriberWaitlist from "./waitlist";
 
 export const metadata: Metadata = {
   title: "Video to Text Transcriber — Free AI Transcription Online",
@@ -17,9 +17,7 @@ export const metadata: Metadata = {
     "ai transcription online",
     "youtube to text",
   ],
-  alternates: {
-    canonical: "https://www.vidiflow.co/video-transcriber",
-  },
+  alternates: { canonical: "https://www.vidiflow.co/video-transcriber" },
   openGraph: {
     title: "Video to Text Transcriber — Free AI Transcription",
     description:
@@ -32,7 +30,14 @@ export const metadata: Metadata = {
   },
 };
 
+const TRANSCRIBER_ENABLED =
+  process.env.NEXT_PUBLIC_TRANSCRIBER_ENABLED === "true";
+
 export default function VideoTranscriberPage() {
+  if (!TRANSCRIBER_ENABLED) {
+    return <TranscriberWaitlist />;
+  }
+
   return (
     <>
       <main>

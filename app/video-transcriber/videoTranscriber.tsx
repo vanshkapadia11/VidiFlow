@@ -65,6 +65,12 @@ export default function VideoTranscriber() {
         if (!data.isSubscribed) setShowPricing(true);
       })
       .finally(() => setSubChecked(true));
+      console.log("ENV CHECK", {
+        hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+        hasMonthlyPrice: !!process.env.STRIPE_MONTHLY_PRICE_ID,
+        hasYearlyPrice: !!process.env.STRIPE_YEARLY_PRICE_ID,
+        appUrl: process.env.NEXT_PUBLIC_APP_URL,
+      });
   }, [isLoaded, isSignedIn]);
 
   if (!isLoaded || !isSignedIn) {
