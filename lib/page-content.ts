@@ -967,3 +967,75 @@ export const videoTranscriberContent = {
     },
   ],
 };
+export const videoSubtitlesContent = {
+  description: `VidiFlow's Video Subtitle Generator converts any public YouTube video 
+  into accurate subtitle files instantly using AI — completely free to try. Get 
+  millisecond-precise SRT and VTT subtitle files ready to import into any video editor, 
+  streaming platform, or media player. Supports 99 languages with automatic detection. 
+  Perfect for content creators, educators, translators, and accessibility needs. 
+  No app required, no account needed to get started.`,
+
+  steps: [
+    {
+      number: "01",
+      title: "Paste the YouTube Link",
+      desc: "Copy any public YouTube video URL and paste it into the subtitle generator above.",
+    },
+    {
+      number: "02",
+      title: "Choose Format & Generate",
+      desc: "Select SRT or VTT format and click Generate Subtitles. Our AI processes the audio and creates accurate, timed subtitle cues.",
+    },
+    {
+      number: "03",
+      title: "Copy or Download",
+      desc: "Preview your subtitles instantly. Copy the text to clipboard or download the file and import it anywhere.",
+    },
+  ],
+
+  features: [
+    { icon: "✅", text: "SRT and VTT subtitle formats" },
+    { icon: "✅", text: "Millisecond-accurate timecodes" },
+    { icon: "✅", text: "Supports 99 languages" },
+    { icon: "✅", text: "Automatic language detection" },
+    { icon: "✅", text: "Works with any public YouTube video" },
+    { icon: "✅", text: "Works on iPhone, Android, PC and Mac" },
+    { icon: "✅", text: "No app download needed" },
+    { icon: "✅", text: "AI-powered accuracy" },
+  ],
+
+  faqs: [
+    {
+      q: "How do I generate subtitles for a YouTube video?",
+      a: "Paste the YouTube video URL into VidiFlow's subtitle generator, choose your preferred format (SRT or VTT), and click Generate Subtitles. Your subtitle file will be ready in seconds.",
+    },
+    {
+      q: "What subtitle formats does VidiFlow support?",
+      a: "VidiFlow generates subtitles in SRT and VTT formats. SRT is the most widely supported format for video editors and media players, while VTT is used for web video and streaming platforms.",
+    },
+    {
+      q: "How accurate are the generated subtitles?",
+      a: "VidiFlow uses industry-leading AI speech-to-text technology that delivers high accuracy across multiple languages, accents, and audio quality levels.",
+    },
+    {
+      q: "What languages are supported?",
+      a: "VidiFlow's subtitle generator supports 99 languages with automatic detection. You do not need to manually select the language — the AI detects it from the video audio.",
+    },
+    {
+      q: "Can I use the subtitle file in my video editor?",
+      a: "Yes. SRT and VTT files are the industry-standard formats supported by all major video editors including Premiere Pro, DaVinci Resolve, Final Cut Pro, CapCut, and more.",
+    },
+    {
+      q: "Can I generate subtitles for YouTube Shorts?",
+      a: "Yes, VidiFlow's subtitle generator works with YouTube Shorts as well as regular YouTube videos of any length.",
+    },
+    {
+      q: "How long does subtitle generation take?",
+      a: "Most videos are processed in under a minute. Longer videos may take a few minutes depending on their duration.",
+    },
+    {
+      q: "Can I generate subtitles for private YouTube videos?",
+      a: "No, VidiFlow can only process public YouTube videos. Private or unlisted videos are not accessible for subtitle generation.",
+    },
+  ],
+};

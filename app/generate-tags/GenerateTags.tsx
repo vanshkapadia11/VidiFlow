@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  CopyIcon,
   Loader2,
   CheckIcon,
   SparklesIcon,
@@ -10,26 +9,38 @@ import {
   ZapIcon,
   TrendingUpIcon,
   MousePointer2Icon,
-  HashIcon,
   ArrowRightIcon,
-  TerminalIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
+
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "Top Results": <TrendingUpIcon className="h-3 w-3" />,
+  "How-To": <span className="text-[10px] font-black">HT</span>,
+  Tutorials: <span className="text-[10px] font-black">TU</span>,
+  "Best Of": <span className="text-[10px] font-black">★</span>,
+  "For Beginners": <span className="text-[10px] font-black">01</span>,
+  "Tips & Tricks": <span className="text-[10px] font-black">TT</span>,
+  "Trending Now": <ZapIcon className="h-3 w-3" />,
+  "Why / Reasons": <span className="text-[10px] font-black">?</span>,
+  Comparisons: <span className="text-[10px] font-black">VS</span>,
+  "Quick & Easy": <span className="text-[10px] font-black">EZ</span>,
+};
 
 export default function EnhancedTagGenerator() {
   const [topic, setTopic] = React.useState("");
-  const [tags, setTags] = React.useState<string[]>([]);
   const [aiTags, setAiTags] = React.useState<string[]>([]);
+  const [categorized, setCategorized] = React.useState<
+    Record<string, string[]>
+  >({});
   const [hashtags, setHashtags] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [copiedType, setCopiedType] = React.useState<
-    "tags" | "hashes" | "ai" | null
-  >(null);
+  const [copiedType, setCopiedType] = React.useState<"tags" | "hashes" | null>(
+    null,
+  );
 
   const generateResults = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,34 +52,24 @@ export default function EnhancedTagGenerator() {
       );
       const data = await response.json();
 
-      const cleanSubject = topic
-        .replace(/how to|instantly|tutorial|2026/gi, "")
-        .trim();
-      const tagVariations = [
-        `how to ${cleanSubject}`,
-        `${cleanSubject} tutorial`,
-        `${cleanSubject} 2026`,
-        `best ${cleanSubject} tips`,
-        `mastering ${cleanSubject}`,
-        `viral ${cleanSubject} strategy`,
-        `${cleanSubject} for beginners`,
-        `why ${cleanSubject} is better`,
-      ];
-
-      const generatedHashes = [
-        `#${cleanSubject.replace(/\s+/g, "")}`,
-        `#Viral`,
-        `#YouTubeSEO`,
-        `#Trending`,
-      ];
-
-      setTags(
-        Array.from(
-          new Set([...tagVariations, ...tagVariations.map((v) => `easy ${v}`)]),
-        ),
-      );
       setAiTags(data.tags || []);
-      setHashtags(Array.from(new Set(generatedHashes)));
+      setCategorized(data.categorized || {});
+
+      // Hashtags derived from top scored tags
+      const topWords = (data.tags as string[]).slice(0, 6).map((t: string) =>
+        t
+          .split(" ")
+          .map((w: string) => w[0].toUpperCase() + w.slice(1))
+          .join(""),
+      );
+      setHashtags(
+        [
+          "#YouTubeSEO",
+          "#Viral",
+          "#Trending",
+          ...topWords.map((w: string) => `#${w}`),
+        ].slice(0, 8),
+      );
     } catch (error) {
       console.error("Failed to fetch tags:", error);
     } finally {
@@ -76,7 +77,7 @@ export default function EnhancedTagGenerator() {
     }
   };
 
-  const copyToClipboard = (content: string, type: "tags" | "hashes" | "ai") => {
+  const copyToClipboard = (content: string, type: "tags" | "hashes") => {
     navigator.clipboard.writeText(content);
     setCopiedType(type);
     setTimeout(() => setCopiedType(null), 2000);
@@ -84,17 +85,18 @@ export default function EnhancedTagGenerator() {
 
   const resetAll = () => {
     setTopic("");
-    setTags([]);
     setAiTags([]);
+    setCategorized({});
     setHashtags([]);
   };
+
+  const hasResults = aiTags.length > 0 || Object.keys(categorized).length > 0;
 
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-100 font-sans text-zinc-900">
       <Navbar />
 
       <main className="max-w-6xl mx-auto p-6 lg:py-16 antialiased">
-        {/* HERO HEADER */}
         {/* HERO HEADER */}
         <div className="flex flex-col items-center text-center mb-12">
           <div className="flex items-center gap-2 mb-5">
@@ -159,14 +161,12 @@ export default function EnhancedTagGenerator() {
             ))}
           </div>
         </div>
+
         {/* SEARCH CONSOLE */}
         <div className="max-w-3xl mx-auto mb-20">
           <form onSubmit={generateResults} className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-orange-500 rounded-[30px] blur opacity-15 group-focus-within:opacity-30 transition duration-1000"></div>
             <Card className="relative flex items-center gap-3 p-6 rounded-[26px] border-zinc-100 shadow-2xl shadow-zinc-200/50 bg-white">
-              {/* <div className="pl-4">
-                <TerminalIcon className="h-5 w-5 text-zinc-400" />
-              </div> */}
               <Input
                 placeholder="ENTER YOUR VIDEO TOPIC..."
                 value={topic}
@@ -192,7 +192,7 @@ export default function EnhancedTagGenerator() {
           </form>
         </div>
 
-        {tags.length > 0 ? (
+        {hasResults ? (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
             {/* ACTION BAR */}
             <div className="sticky top-4 z-40 flex flex-wrap items-center justify-between gap-4 bg-white/80 backdrop-blur-md border border-zinc-100 p-4 rounded-3xl shadow-xl shadow-zinc-200/20">
@@ -208,7 +208,7 @@ export default function EnhancedTagGenerator() {
               </div>
               <div className="flex items-center gap-2">
                 <Button
-                  onClick={() => copyToClipboard(tags.join(", "), "tags")}
+                  onClick={() => copyToClipboard(aiTags.join(", "), "tags")}
                   className={`h-11 px-6 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all ${
                     copiedType === "tags"
                       ? "bg-green-500 text-white"
@@ -232,7 +232,7 @@ export default function EnhancedTagGenerator() {
               </div>
             </div>
 
-            {/* AI TAGS SECTION */}
+            {/* AI / TOP SCORED TAGS */}
             {aiTags.length > 0 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
@@ -240,7 +240,7 @@ export default function EnhancedTagGenerator() {
                     <SparklesIcon className="h-4 w-4 text-white fill-white/20" />
                   </div>
                   <h2 className="text-xl font-black text-zinc-900 uppercase italic tracking-tighter">
-                    Machine Learning Tags
+                    Top Ranked Tags
                   </h2>
                 </div>
 
@@ -262,31 +262,52 @@ export default function EnhancedTagGenerator() {
               </div>
             )}
 
-            {/* STANDARD TAGS GRID */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 bg-zinc-100 rounded-xl flex items-center justify-center">
-                  <TrendingUpIcon className="h-4 w-4 text-zinc-900" />
-                </div>
-                <h2 className="text-xl font-black text-zinc-900 uppercase italic tracking-tighter">
-                  Semantic Variations
-                </h2>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, i) => (
-                  <div
-                    key={i}
-                    className="bg-white border border-zinc-200 px-4 py-3 rounded-xl hover:bg-zinc-50 transition-colors flex items-center gap-3"
-                  >
-                    <div className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
-                    <span className="text-xs font-bold text-zinc-600 uppercase tracking-wide">
-                      {tag}
-                    </span>
+            {/* CATEGORIZED SEARCH INTENT CLUSTERS */}
+            {Object.keys(categorized).length > 0 && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                    <TrendingUpIcon className="h-4 w-4 text-zinc-900" />
                   </div>
-                ))}
+                  <h2 className="text-xl font-black text-zinc-900 uppercase italic tracking-tighter">
+                    Search Intent Clusters
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(categorized).map(([category, catTags]) => (
+                    <div
+                      key={category}
+                      className="bg-white border border-zinc-100 rounded-2xl p-5 space-y-3 hover:border-zinc-200 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="h-5 w-5 bg-zinc-100 rounded-md flex items-center justify-center text-zinc-500">
+                          {CATEGORY_ICONS[category] ?? (
+                            <span className="text-[9px] font-black">•</span>
+                          )}
+                        </div>
+                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                          {category}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {catTags.map((tag, i) => (
+                          <div
+                            key={i}
+                            className="bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-zinc-100 transition-colors cursor-default"
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full bg-zinc-300 shrink-0" />
+                            <span className="text-xs font-bold text-zinc-600 uppercase tracking-wide">
+                              {tag}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* HASHTAG FOOTER */}
             <div className="bg-zinc-900 rounded-[32px] p-8 text-center space-y-6 shadow-2xl">
@@ -328,7 +349,6 @@ export default function EnhancedTagGenerator() {
           </div>
         )}
       </main>
-      {/* <CreatorFooter /> */}
     </div>
   );
 }
