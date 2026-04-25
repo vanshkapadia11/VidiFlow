@@ -1,26 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import AdScript from "@/components/AdScript";
 // import { Providers } from "./providers";
 
+// Keep only what you actually use
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap", // ← add this! fixes LCP font delay
+  preload: true, // ← add this!
 });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Delete geistSans and geistMono entirely
 
 // Change 'rootMetadata' to 'metadata' so Next.js can find it
 export const metadata: Metadata = {
@@ -98,11 +94,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={jetbrainsMono.variable}>
       <head>
-        <script
+        {/* <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9027923218074479"
           crossOrigin="anonymous"
-        ></script>
+        ></script> */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#e60023" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -121,14 +117,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>
-          <ClerkProvider>{children}</ClerkProvider>
-        </Providers>
+      <body className={`antialiased`}>
+        <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
+          <AdScript /> {/* ← loads ads 3s after page load */}
       </body>
     </html>
   );
