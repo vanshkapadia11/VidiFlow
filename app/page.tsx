@@ -110,7 +110,7 @@ const stats = [
   { value: "Free", label: "Forever" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
   const recentPosts = getAllPosts().slice(0, 3);
 
   return (
@@ -160,8 +160,7 @@ export default function HomePage() {
                   </svg>
                 </span>
                 <br />
-                Download{" "}
-                <span className="text-red-600">Faster.</span>
+                Download <span className="text-red-600">Faster.</span>
               </h1>
               <p className="max-w-lg mx-auto text-zinc-500 font-medium text-lg leading-relaxed">
                 One platform for all your content needs. High-quality downloads,
@@ -218,7 +217,8 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-zinc-400 text-sm max-w-xs text-right hidden md:block">
-              Select any tool below to get started instantly. No signup required.
+              Select any tool below to get started instantly. No signup
+              required.
             </p>
           </div>
 
@@ -260,8 +260,8 @@ export default function HomePage() {
                               {tool.status === "Soon"
                                 ? "Coming Soon"
                                 : tool.status === "Pro"
-                                ? "Pro Feature"
-                                : "Ready to use"}
+                                  ? "Pro Feature"
+                                  : "Ready to use"}
                             </p>
                           </div>
                         </div>
@@ -293,7 +293,8 @@ export default function HomePage() {
         {/* ─── WHY VIDIFLOW ─────────────────────────────────────────── */}
         <section className="relative bg-zinc-900 py-28 text-white overflow-hidden">
           {/* Background texture */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          <div
+            className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
               backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
               backgroundSize: "32px 32px",
@@ -308,8 +309,7 @@ export default function HomePage() {
                   The VidiFlow Edge
                 </Badge>
                 <h2 className="text-5xl font-black uppercase italic leading-[1.05]">
-                  Built for{" "}
-                  <span className="text-red-500">Creators</span>
+                  Built for <span className="text-red-500">Creators</span>
                   <br />
                   who value speed.
                 </h2>
@@ -354,7 +354,8 @@ export default function HomePage() {
             <div className="relative">
               <div className="relative aspect-square bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-[40px] border border-zinc-700/60 overflow-hidden p-10 flex flex-col justify-between">
                 {/* Grid overlay */}
-                <div className="absolute inset-0 opacity-[0.04]"
+                <div
+                  className="absolute inset-0 opacity-[0.04]"
                   style={{
                     backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
                     backgroundSize: "40px 40px",
@@ -374,12 +375,16 @@ export default function HomePage() {
                 {/* Floating chips */}
                 <div className="absolute top-8 right-8 flex items-center gap-2 px-3 py-2 bg-zinc-800/90 backdrop-blur-sm rounded-xl border border-zinc-700 shadow-lg">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-wider">4K Quality</span>
+                  <span className="text-[10px] font-black text-white uppercase tracking-wider">
+                    4K Quality
+                  </span>
                 </div>
 
                 <div className="absolute top-8 left-8 flex items-center gap-2 px-3 py-2 bg-red-600/90 backdrop-blur-sm rounded-xl shadow-lg">
                   <ZapIcon className="h-3 w-3 text-white fill-white" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-wider">Fast CDN</span>
+                  <span className="text-[10px] font-black text-white uppercase tracking-wider">
+                    Fast CDN
+                  </span>
                 </div>
 
                 <div className="absolute bottom-8 left-8 right-8">
@@ -431,7 +436,11 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {recentPosts.map((post, i) => (
-                <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group"
+                >
                   <div
                     className={`h-full flex flex-col justify-between rounded-[24px] border p-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
                       i === 0
@@ -504,7 +513,8 @@ export default function HomePage() {
           <div className="relative bg-zinc-900 rounded-[40px] overflow-hidden p-12 md:p-16 text-center">
             {/* Bg effects */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-red-600/20 blur-[80px] rounded-full pointer-events-none" />
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+            <div
+              className="absolute inset-0 opacity-[0.03] pointer-events-none"
               style={{
                 backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
                 backgroundSize: "28px 28px",
