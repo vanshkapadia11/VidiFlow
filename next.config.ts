@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       "@clerk/nextjs",
       "embla-carousel-react",
       "radix-ui",
+      "date-fns", // add this
+      "sonner", // add this
+      "@stripe/stripe-js", // add this
     ],
   },
 

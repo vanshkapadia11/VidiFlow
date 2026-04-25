@@ -191,7 +191,7 @@ export default function ExploreFeatures() {
 
             {/* Headline — same weight/style as homepage h1 */}
             <div className="text-center space-y-4 mb-10">
-              <h1 className="text-[clamp(3rem,9vw,7rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+              <h1 className="text-[clamp(3rem,9vw,7rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
                 Explore{" "}
                 <span className="relative inline-block">
                   <span className="text-red-600">Features.</span>

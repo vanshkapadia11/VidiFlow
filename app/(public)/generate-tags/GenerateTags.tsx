@@ -114,7 +114,7 @@ export default function EnhancedTagGenerator() {
             </span>
           </div>
 
-          <h1 className="text-[clamp(3rem,9vw,7rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+          <h1 className="text-[clamp(3rem,9vw,7rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
             Viral
             <span className="relative inline-block">
               <span className="text-red-600">Tags.</span>

@@ -110,7 +110,7 @@ export default function CreatorFooter() {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-[1000] tracking-tighter text-white uppercase italic leading-none">
+                <span className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">
                   Vidi<span className="text-red-500">Flow</span>
                 </span>
                 <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.4em] mt-1">

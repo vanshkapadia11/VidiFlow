@@ -68,7 +68,7 @@ export default function TranscriberWaitlist() {
 
             {/* Headline */}
             <div className="text-center space-y-4 mb-10">
-              <h1 className="text-[clamp(3rem,9vw,6.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+              <h1 className="text-[clamp(3rem,9vw,6.5rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
                 Video{" "}
                 <span className="relative inline-block">
                   <span className="text-violet-600">Transcribe.</span>

@@ -274,7 +274,7 @@ export default function VideoSubtitles() {
             </div>
 
             {/* BIG TITLE with underline under the whole word */}
-            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
               Sub
               <span className="relative inline-block">
                 <span className="text-emerald-500">titles.</span>

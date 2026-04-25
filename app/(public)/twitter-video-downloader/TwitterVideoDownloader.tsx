@@ -122,7 +122,7 @@ export default function TwitterDownloader() {
               </span>
             </div>
 
-            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
               X
               <span className="relative inline-block">
                 <span className="text-zinc-500">Rip.</span>

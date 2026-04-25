@@ -144,7 +144,7 @@ export default function TwitchDownloader() {
               </span>
             </div>
 
-            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-[1000] tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-black tracking-tighter uppercase italic leading-[0.88] text-zinc-900">
               Twitch
               <span className="relative inline-block">
                 <span className="text-purple-600">Rip.</span>
