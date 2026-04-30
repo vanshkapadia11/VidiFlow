@@ -1,6 +1,6 @@
 // app/sitemap.ts
 // Place this file at: app/sitemap.ts
-// Accessible at: vidiflow.com/sitemap.xml (Next.js handles this automatically)
+// Accessible at: vidiflow,co/sitemap.xml (Next.js handles this automatically)
 
 import { MetadataRoute } from "next";
 

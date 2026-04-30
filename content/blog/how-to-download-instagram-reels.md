@@ -31,7 +31,7 @@ Open Instagram and find the Reel you want to save.
 
 ### Step 2 — Open VidiFlow
 
-Go to **vidiflow.com/instagram-downloader** in your browser. No login needed.
+Go to **vidiflow,co/instagram-downloader** in your browser. No login needed.
 
 ### Step 3 — Paste and Download
 

@@ -31,7 +31,7 @@ Open TikTok on your phone or browser. Find the video you want to save.
 
 ### Step 2 — Go to VidiFlow
 
-Open your browser and go to **vidiflow.com/tiktok-video-downloader**
+Open your browser and go to **vidiflow,co/tiktok-video-downloader**
 
 No account needed. No app to download.
 

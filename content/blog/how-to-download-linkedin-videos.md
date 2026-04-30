@@ -31,7 +31,7 @@ Find the LinkedIn post with the video you want to save.
 
 ### Step 2 — Open VidiFlow
 
-Go to **vidiflow.com/linkedin-video-downloader** in your browser.
+Go to **vidiflow,co/linkedin-video-downloader** in your browser.
 
 ### Step 3 — Paste and Download
 

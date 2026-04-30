@@ -1,6 +1,6 @@
 // app/robots.ts
 // Place this file at: app/robots.ts
-// Accessible at: vidiflow.com/robots.txt (Next.js handles this automatically)
+// Accessible at: vidiflow,co/robots.txt (Next.js handles this automatically)
 
 import { MetadataRoute } from "next";
 

@@ -28,7 +28,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Copy the TikTok video link (tap Share → Copy Link)
-2. Paste at **vidiflow.com/tiktok-video-downloader**
+2. Paste at **vidiflow,co/tiktok-video-downloader**
 3. Download in HD — no watermark
 
 ✅ Works with TikTok Shorts and Slides
@@ -42,7 +42,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Copy the YouTube URL
-2. Paste at **vidiflow.com/youtube-video-downloader**
+2. Paste at **vidiflow,co/youtube-video-downloader**
 3. Choose quality and download
 
 ✅ Works with YouTube Shorts
@@ -56,7 +56,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Copy the YouTube URL
-2. Paste at **vidiflow.com/youtube-audio-downloader**
+2. Paste at **vidiflow,co/youtube-audio-downloader**
 3. Download as MP3 at up to 320kbps
 
 ✅ Perfect for listening offline
@@ -70,7 +70,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Tap the three dots on any post → Copy Link
-2. Paste at **vidiflow.com/instagram-downloader**
+2. Paste at **vidiflow,co/instagram-downloader**
 3. Download in HD
 
 ✅ Works with Reels, Stories, Videos, IGTV
@@ -84,7 +84,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Click the three dots on the video → Copy Link
-2. Paste at **vidiflow.com/facebook-video-downloader**
+2. Paste at **vidiflow,co/facebook-video-downloader**
 3. Choose HD or SD quality
 
 ✅ Works with Facebook Watch and Reels
@@ -98,7 +98,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Click Share on the tweet → Copy Link
-2. Paste at **vidiflow.com/twitter-downloader**
+2. Paste at **vidiflow,co/twitter-downloader**
 3. Download in highest quality
 
 ✅ Works with both twitter.com and x.com links
@@ -112,7 +112,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Tap Share on the pin → Copy Link
-2. Paste at **vidiflow.com/pinterest-downloader**
+2. Paste at **vidiflow,co/pinterest-downloader**
 3. Download video or image
 
 ✅ Supports pin.it short links
@@ -126,7 +126,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Tap Share on the Spotlight → Copy Link
-2. Paste at **vidiflow.com/snapchat-downloader**
+2. Paste at **vidiflow,co/snapchat-downloader**
 3. Download instantly
 
 ✅ Works with public Spotlight videos
@@ -140,7 +140,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Click the three dots on the post → Copy link to post
-2. Paste at **vidiflow.com/linkedin-video-downloader**
+2. Paste at **vidiflow,co/linkedin-video-downloader**
 3. Download instantly
 
 ✅ No LinkedIn account needed
@@ -153,7 +153,7 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 **How to use:**
 1. Click Share on the clip → Copy Link
-2. Paste at **vidiflow.com/twitch-downloader**
+2. Paste at **vidiflow,co/twitch-downloader**
 3. Download in HD
 
 ✅ Works with Twitch clips and highlights
@@ -186,4 +186,4 @@ TikTok's built-in save feature adds a watermark with the creator's username. Vid
 
 ---
 
-Start downloading now at **[vidiflow.com](/)** 🚀
+Start downloading now at **[vidiflow,co](/)** 🚀

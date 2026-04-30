@@ -36,7 +36,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://www.vidiflow.com/blog/${slug}`,
+      url: `https://www.vidiflow.co/blog/${slug}`,
       type: "article",
       publishedTime: post.date,
     },

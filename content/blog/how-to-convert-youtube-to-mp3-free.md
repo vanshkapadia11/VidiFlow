@@ -32,7 +32,7 @@ You can also copy short links like `youtu.be/xxxxx` — both formats work.
 
 ### Step 2 — Go to VidiFlow Audio Downloader
 
-Open **vidiflow.com/youtube-audio-downloader** in your browser.
+Open **vidiflow,co/youtube-audio-downloader** in your browser.
 
 ### Step 3 — Paste and Download
 
