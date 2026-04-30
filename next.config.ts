@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "stripe"],
 
@@ -15,6 +20,7 @@ const nextConfig: NextConfig = {
       "sonner", // add this
       "@stripe/stripe-js", // add this
     ],
+    optimizeCss: true, // ← add this, fixes render-blocking CSS
   },
 
   // ── Compress responses ──
@@ -74,4 +80,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// export default nextConfig;
+
+  export default withBundleAnalyzer(nextConfig);
