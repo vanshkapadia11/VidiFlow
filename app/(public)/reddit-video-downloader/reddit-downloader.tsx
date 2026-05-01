@@ -12,6 +12,7 @@ import {
   ArrowDownToLineIcon,
   UserIcon,
   HashIcon,
+  ImageIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ interface RedditResult {
   thumbnail: string | null;
   duration: number;
   formats: RedditFormat[];
+  images?: string[];
   defaultUrl: string;
   audioUrl?: string;
   note?: string;
@@ -53,6 +55,9 @@ export default function RedditDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [downloading, setDownloading] = React.useState(false);
+  const [downloadingImg, setDownloadingImg] = React.useState<number | null>(
+    null,
+  );
   const [result, setResult] = React.useState<RedditResult | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [selectedFormat, setSelectedFormat] =
@@ -107,12 +112,49 @@ export default function RedditDownloader() {
     }
   };
 
+  const handleImageDownload = async (imgUrl: string, index: number) => {
+    if (downloadingImg !== null) return;
+    setDownloadingImg(index);
+    const safeTitle =
+      (result?.title || "reddit-image")
+        .replace(/[^a-zA-Z0-9\s_-]/g, "")
+        .trim()
+        .substring(0, 50) || "RedditSave";
+    try {
+      const proxyUrl = `/api/reddit-proxy?url=${encodeURIComponent(imgUrl)}`;
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error("proxy failed");
+      const blob = await res.blob();
+      const ext = blob.type.includes("png")
+        ? "png"
+        : blob.type.includes("gif")
+          ? "gif"
+          : "jpg";
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${safeTitle}_${index + 1}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
+    } catch {
+      // Fallback: open in new tab
+      window.open(imgUrl, "_blank");
+    } finally {
+      setDownloadingImg(null);
+    }
+  };
+
   const reset = () => {
     setResult(null);
     setUrl("");
     setError(null);
     setSelectedFormat(null);
   };
+
+  const hasVideos = (result?.formats?.length ?? 0) > 0;
+  const hasImages = (result?.images?.length ?? 0) > 0;
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
@@ -134,7 +176,7 @@ export default function RedditDownloader() {
               </div>
               <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest flex items-center gap-1">
                 <div className="h-1 w-1 rounded-full bg-orange-500 animate-pulse" />
-                Videos &amp; GIFs
+                Videos, GIFs &amp; Images
               </span>
             </div>
 
@@ -160,16 +202,16 @@ export default function RedditDownloader() {
             </h1>
 
             <p className="mt-4 max-w-md text-zinc-500 font-medium text-base leading-relaxed">
-              Download Reddit videos and GIFs in full quality — MP4, no login,
-              no watermarks.
+              Download Reddit videos, GIFs, and images in full quality — no
+              login, no watermarks.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 shrink-0">
             {[
               { value: "1080p", label: "Max Quality" },
-              { value: "MP4", label: "Format" },
-              { value: "GIF", label: "Supported" },
+              { value: "MP4", label: "Video" },
+              { value: "JPG", label: "Images" },
               { value: "Free", label: "Forever" },
             ].map((s, i) => (
               <div
@@ -199,7 +241,7 @@ export default function RedditDownloader() {
                     </svg>
                   </div>
                   <span className="font-bold text-[11px] uppercase tracking-wider text-zinc-700">
-                    Reddit Video Downloader
+                    Reddit Downloader
                   </span>
                 </div>
 
@@ -225,7 +267,7 @@ export default function RedditDownloader() {
                     ) : (
                       <span className="flex items-center gap-2">
                         <ArrowDownToLineIcon className="h-3.5 w-3.5" /> Get
-                        Video
+                        Media
                       </span>
                     )}
                   </Button>
@@ -253,7 +295,12 @@ export default function RedditDownloader() {
                   {
                     icon: "🎬",
                     label: "Reddit Videos",
-                    desc: "v.redd.it videos",
+                    desc: "v.redd.it videos up to 1080p",
+                  },
+                  {
+                    icon: "🖼️",
+                    label: "Photos & Galleries",
+                    desc: "Full-res images & multi-image posts",
                   },
                   {
                     icon: "🎞️",
@@ -264,11 +311,6 @@ export default function RedditDownloader() {
                     icon: "📱",
                     label: "All Subreddits",
                     desc: "Public posts only",
-                  },
-                  {
-                    icon: "⚡",
-                    label: "Multiple Qualities",
-                    desc: "Up to 1080p",
                   },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-3">
@@ -315,8 +357,8 @@ export default function RedditDownloader() {
                       Awaiting Reddit URL
                     </p>
                     <p className="text-zinc-400 text-xs max-w-[220px] leading-relaxed lowercase italic">
-                      Paste a public Reddit post link to download its video or
-                      GIF.
+                      Paste a public Reddit post link to download its video,
+                      GIF, or images.
                     </p>
                   </div>
                 </div>
@@ -345,8 +387,8 @@ export default function RedditDownloader() {
                     </h3>
                   </div>
 
-                  {/* THUMBNAIL */}
-                  {result.thumbnail && (
+                  {/* THUMBNAIL (video posts) */}
+                  {result.thumbnail && hasVideos && (
                     <div className="relative rounded-2xl overflow-hidden bg-zinc-100 aspect-video">
                       <img
                         src={result.thumbnail}
@@ -360,7 +402,7 @@ export default function RedditDownloader() {
                   )}
 
                   {/* QUALITY SELECTOR */}
-                  {result.formats && result.formats.length > 1 && (
+                  {hasVideos && result.formats.length > 1 && (
                     <div className="space-y-2">
                       <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                         Select Quality
@@ -390,34 +432,106 @@ export default function RedditDownloader() {
                     </div>
                   )}
 
-                  {/* DOWNLOAD BUTTONS */}
-                  <div className="space-y-3">
-                    <Button
-                      onClick={handleDownload}
-                      disabled={downloading || !selectedFormat}
-                      className="w-full h-14 text-white rounded-[20px] font-black uppercase text-sm shadow-xl transition-transform active:scale-95"
-                      style={{
-                        background: "linear-gradient(135deg, #ff4500, #ff6534)",
-                        boxShadow: "0 8px 24px rgba(255,69,0,0.3)",
-                      }}
-                    >
-                      {downloading ? (
-                        <Loader2 className="animate-spin h-5 w-5" />
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <DownloadIcon className="h-4 w-4" />
-                          Download {selectedFormat?.quality ?? ""} Video
-                        </span>
+                  {/* VIDEO DOWNLOAD BUTTON */}
+                  {hasVideos && (
+                    <div className="space-y-3">
+                      <Button
+                        onClick={handleDownload}
+                        disabled={downloading || !selectedFormat}
+                        className="w-full h-14 text-white rounded-[20px] font-black uppercase text-sm shadow-xl transition-transform active:scale-95"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #ff4500, #ff6534)",
+                          boxShadow: "0 8px 24px rgba(255,69,0,0.3)",
+                        }}
+                      >
+                        {downloading ? (
+                          <Loader2 className="animate-spin h-5 w-5" />
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            <DownloadIcon className="h-4 w-4" />
+                            Download {selectedFormat?.quality ?? ""} Video
+                          </span>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* IMAGES SECTION */}
+                  {hasImages && (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="h-3.5 w-3.5 text-zinc-400" />
+                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                          Photos ({result.images!.length})
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        {result.images!.map((imgUrl, i) => (
+                          <div
+                            key={i}
+                            className="relative group rounded-xl overflow-hidden border border-zinc-100 shadow-sm bg-zinc-50"
+                          >
+                            <img
+                              src={imgUrl}
+                              alt={`Photo ${i + 1}`}
+                              className="w-full h-36 object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display =
+                                  "none";
+                              }}
+                            />
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 flex items-center justify-center">
+                              <Button
+                                onClick={() => handleImageDownload(imgUrl, i)}
+                                disabled={downloadingImg !== null}
+                                className="opacity-0 group-hover:opacity-100 transition-all duration-200 h-9 px-4 bg-white hover:bg-zinc-100 text-zinc-900 rounded-lg font-black uppercase text-[10px] tracking-widest shadow-lg scale-90 group-hover:scale-100"
+                              >
+                                {downloadingImg === i ? (
+                                  <Loader2 className="animate-spin h-3 w-3" />
+                                ) : (
+                                  <span className="flex items-center gap-1.5">
+                                    <DownloadIcon className="h-3 w-3" /> Save
+                                  </span>
+                                )}
+                              </Button>
+                            </div>
+                            {/* Index badge */}
+                            <div className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              {i + 1}/{result.images!.length}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Download all if multiple */}
+                      {result.images!.length > 1 && (
+                        <Button
+                          onClick={async () => {
+                            for (let i = 0; i < result.images!.length; i++) {
+                              await handleImageDownload(result.images![i], i);
+                              await new Promise((r) => setTimeout(r, 600));
+                            }
+                          }}
+                          disabled={downloadingImg !== null}
+                          className="w-full h-11 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                        >
+                          <DownloadIcon className="h-3.5 w-3.5 mr-2" />
+                          Download All {result.images!.length} Photos
+                        </Button>
                       )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={reset}
-                      className="w-full text-zinc-400 hover:text-zinc-900 font-bold uppercase text-[10px]"
-                    >
-                      <RotateCcwIcon className="mr-2 h-3.5 w-3.5" /> Start Fresh
-                    </Button>
-                  </div>
+                    </div>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    onClick={reset}
+                    className="w-full text-zinc-400 hover:text-zinc-900 font-bold uppercase text-[10px]"
+                  >
+                    <RotateCcwIcon className="mr-2 h-3.5 w-3.5" /> Start Fresh
+                  </Button>
                 </div>
               )}
             </Card>

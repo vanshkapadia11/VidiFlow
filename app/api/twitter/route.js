@@ -28,7 +28,6 @@ function parseFormatsFromHtml(html) {
   const formats = [];
   const seenUrls = new Set();
 
-  // Match href="...mp4..." with nearby quality labels
   const hrefMatches = [
     ...html.matchAll(/href="(https?:\/\/[^"]+\.mp4[^"]*)"/g),
   ];
@@ -37,7 +36,6 @@ function parseFormatsFromHtml(html) {
     if (seenUrls.has(url)) continue;
     seenUrls.add(url);
 
-    // Look for resolution near the link
     const pos = html.indexOf(m[0]);
     const nearby = html.substring(Math.max(0, pos - 200), pos + 200);
     const resMatch =
@@ -54,6 +52,58 @@ function parseFormatsFromHtml(html) {
   }
 
   return formats;
+}
+
+// Extract image URLs from various API response shapes
+function extractImages(data) {
+  const images = [];
+  const seen = new Set();
+
+  const addImg = (url) => {
+    if (!url || seen.has(url)) return;
+    // Skip tiny icons / avatars / profile pics
+    if (url.includes("profile_image") || url.includes("avatar")) return;
+    seen.add(url);
+    images.push(url);
+  };
+
+  // Shape 1: media array with type=photo
+  for (const m of data.media || []) {
+    if (m.type === "photo" || (!m.type && m.url && !m.url.includes(".mp4"))) {
+      addImg(m.url || m.media_url_https);
+    }
+  }
+
+  // Shape 2: extended_entities / entities style (twitter-api45, vxtwitter)
+  const mediaList =
+    data.extended_entities?.media ||
+    data.entities?.media ||
+    data.media_extended ||
+    [];
+  for (const m of mediaList) {
+    if (m.type === "photo") {
+      addImg(m.media_url_https || m.url);
+    }
+  }
+
+  // Shape 3: fxtwitter — tweet.media.photos
+  const photos = data.tweet?.media?.photos || data.media?.photos || [];
+  for (const p of photos) {
+    addImg(p.url);
+  }
+
+  // Shape 4: mediaURLs array where items are plain strings (vxtwitter sometimes)
+  for (const u of data.mediaURLs || []) {
+    if (typeof u === "string" && !u.includes(".mp4")) addImg(u);
+    else if (u.type === "photo") addImg(u.url);
+  }
+
+  // Shape 5: top-level photo array
+  for (const p of data.photos || []) {
+    addImg(p.url || p);
+  }
+
+  return images;
 }
 
 export async function POST(req) {
@@ -85,13 +135,11 @@ export async function POST(req) {
       );
     console.log("[XSave] Tweet ID:", tweetId);
 
-    // Normalize: always use twitter.com internally (more compatible)
     const twitterUrl = url.replace("x.com", "twitter.com");
-    const xUrl = url.replace("twitter.com", "x.com");
 
-    // ── STRATEGY A: RapidAPI (most reliable in 2026) ──
+    // ── STRATEGY A: RapidAPI ──
     if (process.env.RAPIDAPI_KEY) {
-      // A1: twitter-downloader (dedicated, most accurate)
+      // A1: twitter-downloader
       try {
         console.log("[XSave] Trying RapidAPI twitter-downloader...");
         const r = await fetch(
@@ -113,7 +161,8 @@ export async function POST(req) {
           const videos = (d.media || []).filter(
             (m) => m.url?.includes(".mp4") || m.type === "video",
           );
-          if (videos.length > 0) {
+          const images = extractImages(d);
+          if (videos.length > 0 || images.length > 0) {
             const formats = videos
               .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
               .map((v) => ({
@@ -125,9 +174,10 @@ export async function POST(req) {
             return NextResponse.json({
               tweetId,
               formats,
-              defaultUrl: formats[0].url,
+              images,
+              defaultUrl: formats[0]?.url || null,
               thumbnail: d.thumbnail || null,
-              title: d.text || "X / Twitter Video",
+              title: d.text || "X / Twitter Post",
               author: d.author?.name || "",
               success: true,
             });
@@ -137,7 +187,7 @@ export async function POST(req) {
         console.error("[XSave] twitter-downloader failed:", e.message);
       }
 
-      // A2: twitter-api45 — returns clean video variants
+      // A2: twitter-api45
       try {
         console.log("[XSave] Trying RapidAPI twitter-api45...");
         const r = await fetch(
@@ -163,7 +213,9 @@ export async function POST(req) {
             )
             .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
 
-          if (mp4s.length > 0) {
+          const images = extractImages(d);
+
+          if (mp4s.length > 0 || images.length > 0) {
             const formats = mp4s.map((v) => {
               const res = v.url?.match(/\/(\d{3,4})x(\d{3,4})\//);
               const quality = res
@@ -179,9 +231,10 @@ export async function POST(req) {
             return NextResponse.json({
               tweetId,
               formats,
-              defaultUrl: formats[0].url,
+              images,
+              defaultUrl: formats[0]?.url || null,
               thumbnail: d.thumbnail || d.media?.[0]?.media_url_https || null,
-              title: d.text || d.full_text || "X / Twitter Video",
+              title: d.text || d.full_text || "X / Twitter Post",
               author: d.author?.name || d.user?.name || "",
               success: true,
             });
@@ -214,13 +267,15 @@ export async function POST(req) {
               url: l.link,
               label: l.quality || "HD",
             }));
+            const images = extractImages(d);
             console.log("[XSave] ✅ SMVD success");
             return NextResponse.json({
               tweetId,
               formats,
-              defaultUrl: formats[0].url,
+              images,
+              defaultUrl: formats[0]?.url || null,
               thumbnail: d.picture || null,
-              title: d.title || "X / Twitter Video",
+              title: d.title || "X / Twitter Post",
               author: "",
               success: true,
             });
@@ -246,9 +301,8 @@ export async function POST(req) {
       );
       if (r.ok) {
         const d = await r.json();
-        console.log("[XSave] twitsave:", JSON.stringify(d).substring(0, 300));
-        if (d.videos?.length > 0) {
-          const formats = [...d.videos]
+        if (d.videos?.length > 0 || d.images?.length > 0) {
+          const formats = [...(d.videos || [])]
             .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
             .map((v) => ({
               quality: v.quality || "HD",
@@ -256,14 +310,16 @@ export async function POST(req) {
               label: v.quality || "HD",
             }))
             .filter((f) => f.url);
-          if (formats.length > 0) {
+          const images = extractImages(d);
+          if (formats.length > 0 || images.length > 0) {
             console.log("[XSave] ✅ twitsave success");
             return NextResponse.json({
               tweetId,
               formats,
-              defaultUrl: formats[0].url,
+              images,
+              defaultUrl: formats[0]?.url || null,
               thumbnail: d.thumbnail || null,
-              title: d.text || "X / Twitter Video",
+              title: d.text || "X / Twitter Post",
               author: d.author?.name || "",
               success: true,
             });
@@ -313,9 +369,10 @@ export async function POST(req) {
             return NextResponse.json({
               tweetId,
               formats,
+              images: [],
               defaultUrl: formats[0].url,
               thumbnail: null,
-              title: "X / Twitter Video",
+              title: "X / Twitter Post",
               author: "",
               success: true,
             });
@@ -348,9 +405,10 @@ export async function POST(req) {
           return NextResponse.json({
             tweetId,
             formats,
+            images: [],
             defaultUrl: formats[0].url,
             thumbnail: null,
-            title: "X / Twitter Video",
+            title: "X / Twitter Post",
             author: "",
             success: true,
           });
@@ -378,7 +436,6 @@ export async function POST(req) {
       });
       if (r.ok) {
         const d = await r.json();
-        console.log("[XSave] cobalt:", JSON.stringify(d).substring(0, 300));
         if (
           (d.status === "stream" ||
             d.status === "redirect" ||
@@ -389,9 +446,10 @@ export async function POST(req) {
           return NextResponse.json({
             tweetId,
             formats: [{ quality: "Best", url: d.url, label: "Best Quality" }],
+            images: [],
             defaultUrl: d.url,
             thumbnail: null,
-            title: "X / Twitter Video",
+            title: "X / Twitter Post",
             author: "",
             success: true,
           });
@@ -401,7 +459,7 @@ export async function POST(req) {
       console.error("[XSave] cobalt failed:", e.message);
     }
 
-    // ── STRATEGY F: vxtwitter.com (open-source Twitter embed proxy) ──
+    // ── STRATEGY F: vxtwitter.com ──
     try {
       console.log("[XSave] Trying vxtwitter.com API...");
       const vxUrl = twitterUrl.replace("twitter.com", "api.vxtwitter.com");
@@ -415,7 +473,8 @@ export async function POST(req) {
         const videos = media.filter(
           (m) => m.type === "video" || m.url?.includes(".mp4"),
         );
-        if (videos.length > 0) {
+        const images = extractImages(d);
+        if (videos.length > 0 || images.length > 0) {
           const formats = videos.map((v, i) => ({
             quality: v.size ? `${v.size.height}p` : i === 0 ? "HD" : "SD",
             url: v.url,
@@ -425,9 +484,10 @@ export async function POST(req) {
           return NextResponse.json({
             tweetId,
             formats,
-            defaultUrl: formats[0].url,
+            images,
+            defaultUrl: formats[0]?.url || null,
             thumbnail: d.user_profile_image_url || null,
-            title: d.text || "X / Twitter Video",
+            title: d.text || "X / Twitter Post",
             author: d.user_name || "",
             success: true,
           });
@@ -437,7 +497,7 @@ export async function POST(req) {
       console.error("[XSave] vxtwitter failed:", e.message);
     }
 
-    // ── STRATEGY G: fxtwitter.com (another open embed proxy) ──
+    // ── STRATEGY G: fxtwitter.com ──
     try {
       console.log("[XSave] Trying fxtwitter API...");
       const fxUrl = `https://api.fxtwitter.com/status/${tweetId}`;
@@ -452,7 +512,8 @@ export async function POST(req) {
         const videos = media.filter(
           (m) => m.type === "video" || m.url?.includes(".mp4"),
         );
-        if (videos.length > 0) {
+        const images = extractImages(d);
+        if (videos.length > 0 || images.length > 0) {
           const formats = videos.map((v, i) => ({
             quality: v.height ? `${v.height}p` : i === 0 ? "HD" : "SD",
             url: v.url,
@@ -462,9 +523,10 @@ export async function POST(req) {
           return NextResponse.json({
             tweetId,
             formats,
-            defaultUrl: formats[0].url,
+            images,
+            defaultUrl: formats[0]?.url || null,
             thumbnail: tweet.author?.avatar_url || null,
-            title: tweet.text || "X / Twitter Video",
+            title: tweet.text || "X / Twitter Post",
             author: tweet.author?.name || "",
             success: true,
           });
@@ -479,7 +541,7 @@ export async function POST(req) {
       {
         success: false,
         error:
-          "Could not extract video. Make sure the tweet is public and contains a video. Add RAPIDAPI_KEY to .env.local for best results.",
+          "Could not extract media. Make sure the tweet is public and contains a video or image. Add RAPIDAPI_KEY to .env.local for best results.",
       },
       { status: 404 },
     );

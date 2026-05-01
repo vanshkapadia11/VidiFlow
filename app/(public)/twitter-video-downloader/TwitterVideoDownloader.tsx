@@ -7,6 +7,7 @@ import {
   ZapIcon,
   Link2Icon,
   AlertCircleIcon,
+  ImageIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,12 +27,16 @@ interface TwitterResult {
   author?: string;
   thumbnail?: string;
   formats: TwitterFormat[];
+  images?: string[];
 }
 
 export default function TwitterDownloader() {
   const [url, setUrl] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [downloading, setDownloading] = React.useState<string | null>(null);
+  const [downloadingImg, setDownloadingImg] = React.useState<number | null>(
+    null,
+  );
   const [result, setResult] = React.useState<TwitterResult | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -95,11 +100,45 @@ export default function TwitterDownloader() {
     }
   };
 
+  const handleImageDownload = async (imgUrl: string, index: number) => {
+    if (downloadingImg !== null) return;
+    setDownloadingImg(index);
+    const safeFilename =
+      (result?.title || "ximage")
+        .replace(/[^a-zA-Z0-9\s_-]/g, "")
+        .trim()
+        .substring(0, 60) || "XSave";
+    try {
+      // Try proxy first for CORS-safe download
+      const proxyUrl = `/api/twitter-proxy?url=${encodeURIComponent(imgUrl)}&filename=${encodeURIComponent(`${safeFilename}_photo_${index + 1}`)}`;
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error("proxy failed");
+      const blob = await res.blob();
+      const ext = blob.type.includes("png") ? "png" : "jpg";
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${safeFilename}_photo_${index + 1}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
+    } catch {
+      // Fallback: open in new tab
+      window.open(imgUrl, "_blank");
+    } finally {
+      setDownloadingImg(null);
+    }
+  };
+
   const reset = () => {
     setResult(null);
     setUrl("");
     setError(null);
   };
+
+  const hasVideos = (result?.formats?.length ?? 0) > 0;
+  const hasImages = (result?.images?.length ?? 0) > 0;
 
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
@@ -144,17 +183,16 @@ export default function TwitterDownloader() {
             </h1>
 
             <p className="mt-4 max-w-md text-zinc-500 font-medium text-base leading-relaxed">
-              Download any public Twitter or X video in full quality — no
-              watermarks, no login.
+              Download any public Twitter or X video or image in full quality —
+              no watermarks, no login.
             </p>
           </div>
 
-          {/* Stats strip — matches explore page */}
           <div className="grid grid-cols-2 gap-3 shrink-0">
             {[
               { value: "HD", label: "Quality" },
-              { value: "MP4", label: "Format" },
-              { value: "GIF", label: "Supported" },
+              { value: "MP4", label: "Video" },
+              { value: "JPG", label: "Images" },
               { value: "Free", label: "Forever" },
             ].map((s, i) => (
               <div
@@ -205,7 +243,7 @@ export default function TwitterDownloader() {
                       <Loader2 className="animate-spin h-4 w-4" />
                     ) : (
                       <span className="flex items-center gap-2">
-                        <DownloadIcon className="h-3.5 w-3.5" /> Get Video
+                        <DownloadIcon className="h-3.5 w-3.5" /> Get Media
                       </span>
                     )}
                   </Button>
@@ -228,6 +266,7 @@ export default function TwitterDownloader() {
               </div>
               {[
                 ["🎬", "Videos", "All qualities"],
+                ["🖼️", "Photos", "Full resolution JPG/PNG"],
                 ["🎞️", "GIFs", "As MP4 file"],
                 ["📱", "Twitter & X", "Both domains work"],
               ].map(([icon, label, desc]) => (
@@ -269,8 +308,8 @@ export default function TwitterDownloader() {
                       Awaiting X Post URL
                     </p>
                     <p className="text-zinc-400 text-xs max-w-[220px] leading-relaxed lowercase italic">
-                      Paste any public Twitter or X post link containing a video
-                      or GIF.
+                      Paste any public Twitter or X post link containing a
+                      video, GIF, or images.
                     </p>
                   </div>
                 </div>
@@ -285,25 +324,27 @@ export default function TwitterDownloader() {
                           alt="thumbnail"
                           className="relative w-44 h-44 object-cover rounded-[20px] shadow-2xl border-4 border-white"
                         />
-                        <div className="absolute inset-0 rounded-[20px] flex items-center justify-center bg-black/10">
-                          <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                            <svg
-                              viewBox="0 0 24 24"
-                              className="w-5 h-5 fill-zinc-900 ml-1"
-                            >
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
+                        {hasVideos && (
+                          <div className="absolute inset-0 rounded-[20px] flex items-center justify-center bg-black/10">
+                            <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-5 h-5 fill-zinc-900 ml-1"
+                              >
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     )}
                     <div className="flex-1 space-y-5">
                       <div className="space-y-2">
                         <Badge className="bg-green-50 text-green-600 hover:bg-green-50 border-none text-[10px] uppercase font-bold px-3">
-                          ✓ Video Found
+                          ✓ Media Found
                         </Badge>
                         {result.title &&
-                          result.title !== "X / Twitter Video" && (
+                          result.title !== "X / Twitter Post" && (
                             <p className="text-sm font-bold text-zinc-700 line-clamp-3 leading-relaxed">
                               {result.title}
                             </p>
@@ -315,35 +356,111 @@ export default function TwitterDownloader() {
                         )}
                       </div>
 
-                      <div className="space-y-2">
-                        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                          Available Qualities
-                        </p>
+                      {/* ── Video Section ── */}
+                      {hasVideos && (
                         <div className="space-y-2">
-                          {result.formats.map((fmt, i) => (
-                            <Button
-                              key={i}
-                              onClick={() => handleDownload(fmt)}
-                              disabled={!!downloading}
-                              className={`w-full h-12 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 transition-all ${
-                                i === 0
-                                  ? "bg-zinc-900 hover:bg-zinc-800 text-white shadow-lg shadow-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
-                              }`}
-                            >
-                              {downloading === fmt.quality ? (
-                                <Loader2 className="animate-spin h-4 w-4" />
-                              ) : (
-                                <>
-                                  <DownloadIcon className="h-3.5 w-3.5" />{" "}
-                                  {fmt.label || fmt.quality}{" "}
-                                  {i === 0 ? "— Best" : ""}
-                                </>
-                              )}
-                            </Button>
-                          ))}
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            Video Qualities
+                          </p>
+                          <div className="space-y-2">
+                            {result.formats.map((fmt, i) => (
+                              <Button
+                                key={i}
+                                onClick={() => handleDownload(fmt)}
+                                disabled={!!downloading}
+                                className={`w-full h-12 rounded-xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 transition-all ${
+                                  i === 0
+                                    ? "bg-zinc-900 hover:bg-zinc-800 text-white shadow-lg shadow-zinc-200"
+                                    : "bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200"
+                                }`}
+                              >
+                                {downloading === fmt.quality ? (
+                                  <Loader2 className="animate-spin h-4 w-4" />
+                                ) : (
+                                  <>
+                                    <DownloadIcon className="h-3.5 w-3.5" />{" "}
+                                    {fmt.label || fmt.quality}{" "}
+                                    {i === 0 ? "— Best" : ""}
+                                  </>
+                                )}
+                              </Button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
+
+                      {/* ── Images Section ── */}
+                      {hasImages && (
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <ImageIcon className="h-3 w-3 text-zinc-400" />
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                              Photos ({result.images!.length})
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            {result.images!.map((imgUrl, i) => (
+                              <div
+                                key={i}
+                                className="relative group rounded-xl overflow-hidden border border-zinc-100 shadow-sm"
+                              >
+                                <img
+                                  src={imgUrl}
+                                  alt={`Photo ${i + 1}`}
+                                  className="w-full h-32 object-cover"
+                                />
+                                {/* Overlay download button */}
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 flex items-center justify-center">
+                                  <Button
+                                    onClick={() =>
+                                      handleImageDownload(imgUrl, i)
+                                    }
+                                    disabled={downloadingImg !== null}
+                                    className="opacity-0 group-hover:opacity-100 transition-all duration-200 h-9 px-4 bg-white hover:bg-zinc-100 text-zinc-900 rounded-lg font-black uppercase text-[10px] tracking-widest shadow-lg scale-90 group-hover:scale-100"
+                                  >
+                                    {downloadingImg === i ? (
+                                      <Loader2 className="animate-spin h-3 w-3" />
+                                    ) : (
+                                      <span className="flex items-center gap-1.5">
+                                        <DownloadIcon className="h-3 w-3" />
+                                        Save
+                                      </span>
+                                    )}
+                                  </Button>
+                                </div>
+                                {/* Index badge */}
+                                <div className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                  {i + 1}/{result.images!.length}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          {/* Download all button if multiple images */}
+                          {result.images!.length > 1 && (
+                            <Button
+                              onClick={async () => {
+                                for (
+                                  let i = 0;
+                                  i < result.images!.length;
+                                  i++
+                                ) {
+                                  await handleImageDownload(
+                                    result.images![i],
+                                    i,
+                                  );
+                                  // small gap between downloads
+                                  await new Promise((r) => setTimeout(r, 600));
+                                }
+                              }}
+                              disabled={downloadingImg !== null}
+                              className="w-full h-10 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                            >
+                              <DownloadIcon className="h-3 w-3 mr-2" />
+                              Download All Photos
+                            </Button>
+                          )}
+                        </div>
+                      )}
 
                       <Button
                         variant="ghost"

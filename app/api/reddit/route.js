@@ -2,21 +2,66 @@
 import { NextResponse } from "next/server";
 
 function extractRedditInfo(url) {
-  // Clean URL
   url = url.trim().replace(/\?.*$/, "");
-
-  // Match reddit post URLs
   const patterns = [
     /reddit\.com\/r\/[^/]+\/comments\/([a-zA-Z0-9]+)/,
     /redd\.it\/([a-zA-Z0-9]+)/,
     /reddit\.com\/video\/([a-zA-Z0-9]+)/,
   ];
-
   for (const p of patterns) {
     const m = url.match(p);
     if (m) return m[1];
   }
   return null;
+}
+
+// Extract all images from a Reddit post object
+function extractImages(post) {
+  const images = [];
+  const seen = new Set();
+
+  const add = (url) => {
+    if (!url || seen.has(url)) return;
+    // Skip thumbnails/icons/avatars — only want full-res
+    if (
+      url.includes("thumbs.") ||
+      url.includes("icon_") ||
+      url.includes("snoo")
+    )
+      return;
+    seen.add(url);
+    images.push(url);
+  };
+
+  // 1. Gallery posts — media_metadata contains full-res images
+  if (post.media_metadata) {
+    // gallery_data preserves the order
+    const order =
+      post.gallery_data?.items?.map((i) => i.media_id) ||
+      Object.keys(post.media_metadata);
+    for (const id of order) {
+      const meta = post.media_metadata[id];
+      if (!meta) continue;
+      if (meta.status !== "valid") continue;
+      // s = source (full resolution)
+      const src = meta.s?.u || meta.s?.gif;
+      if (src) add(src.replace(/&amp;/g, "&"));
+    }
+  }
+
+  // 2. Single image post (post_hint: "image")
+  if (post.url && /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(post.url)) {
+    add(post.url);
+  }
+
+  // 3. preview images as fallback
+  const previews = post.preview?.images || [];
+  for (const p of previews) {
+    const src = p.source?.url;
+    if (src) add(src.replace(/&amp;/g, "&"));
+  }
+
+  return images;
 }
 
 export async function POST(req) {
@@ -43,7 +88,6 @@ export async function POST(req) {
     try {
       console.log("[Reddit] Trying Reddit JSON API...");
 
-      // Try multiple URL formats
       const apiUrls = [
         `https://www.reddit.com/comments/${postId}.json`,
         `https://reddit.com/comments/${postId}/.json`,
@@ -62,12 +106,14 @@ export async function POST(req) {
 
         const data = await res.json();
         const post = data?.[0]?.data?.children?.[0]?.data;
-
         if (!post) continue;
 
         console.log("[Reddit] Post found:", post.title);
 
-        // Check if it has video
+        const images = extractImages(post);
+        console.log("[Reddit] Images found:", images.length);
+
+        // ── Video post ──
         const media = post.media || post.secure_media;
         const redditVideo = media?.reddit_video;
 
@@ -80,8 +126,6 @@ export async function POST(req) {
             .replace(/\/DASH_[^/]+\.mp4/, "/DASH_audio.mp4");
 
           const formats = [];
-
-          // Add available quality options
           const height = redditVideo.height || 720;
           const qualityOptions = [1080, 720, 480, 360, 240].filter(
             (q) => q <= height,
@@ -94,12 +138,11 @@ export async function POST(req) {
                 quality: `${quality}p`,
                 url: qUrl,
                 label: `${quality}p MP4`,
-                hasAudio: false, // Reddit stores audio separately
+                hasAudio: false,
               });
             }
           }
 
-          // Add original if no formats found
           if (formats.length === 0 && videoUrl) {
             formats.push({
               quality: "Source",
@@ -109,11 +152,7 @@ export async function POST(req) {
             });
           }
 
-          console.log(
-            "[Reddit] ✅ Reddit video found, formats:",
-            formats.length,
-          );
-
+          console.log("[Reddit] ✅ Video + images found");
           return NextResponse.json({
             success: true,
             type: "video",
@@ -127,13 +166,14 @@ export async function POST(req) {
                 : null,
             duration: redditVideo.duration || 0,
             formats,
+            images,
             defaultUrl: formats[0]?.url || videoUrl,
-            audioUrl, // Separate audio track
+            audioUrl,
             note: "Reddit stores audio and video separately. Download and merge for best quality.",
           });
         }
 
-        // Check for external video (YouTube embed etc)
+        // ── YouTube redirect ──
         if (
           post.url &&
           (post.url.includes("youtube.com") || post.url.includes("youtu.be"))
@@ -148,7 +188,7 @@ export async function POST(req) {
           );
         }
 
-        // GIF/gifv support
+        // ── GIF/gifv ──
         if (
           post.url &&
           (post.url.endsWith(".gif") || post.url.endsWith(".gifv"))
@@ -165,13 +205,13 @@ export async function POST(req) {
             author: post.author || "",
             thumbnail: post.thumbnail || null,
             formats: [{ quality: "Source", url: mp4Url, label: "MP4" }],
+            images: [],
             defaultUrl: mp4Url,
           });
         }
 
-        // v.redd.it video
+        // ── v.redd.it ──
         if (post.url && post.url.includes("v.redd.it")) {
-          const videoUrl = `${post.url}/DASH_720.mp4`;
           return NextResponse.json({
             success: true,
             type: "video",
@@ -197,14 +237,33 @@ export async function POST(req) {
                 label: "360p MP4",
               },
             ],
-            defaultUrl: videoUrl,
+            images,
+            defaultUrl: `${post.url}/DASH_720.mp4`,
+          });
+        }
+
+        // ── Image-only post ──
+        if (images.length > 0) {
+          console.log("[Reddit] ✅ Image post");
+          return NextResponse.json({
+            success: true,
+            type: "image",
+            postId,
+            title: post.title || "Reddit Post",
+            subreddit: post.subreddit || "",
+            author: post.author || "",
+            thumbnail: images[0] || null,
+            duration: 0,
+            formats: [],
+            images,
+            defaultUrl: null,
           });
         }
 
         return NextResponse.json(
           {
             error:
-              "This post doesn't contain a downloadable video. Only video posts are supported.",
+              "This post doesn't contain downloadable media. Only video, image, and gallery posts are supported.",
           },
           { status: 404 },
         );
@@ -248,6 +307,7 @@ export async function POST(req) {
             author: "",
             thumbnail: null,
             formats: [{ quality: "Best", url: d.url, label: "Best Quality" }],
+            images: [],
             defaultUrl: d.url,
           });
         }
@@ -259,7 +319,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         error:
-          "Could not extract video. Make sure the post is public and contains a video.",
+          "Could not extract media. Make sure the post is public and contains a video or image.",
       },
       { status: 404 },
     );
