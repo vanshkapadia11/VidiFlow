@@ -48,6 +48,7 @@ export default function VideoTranscriberPage() {
         steps={videoTranscriberContent.steps}
         features={videoTranscriberContent.features}
         faqs={videoTranscriberContent.faqs}
+        currentPath="/video-transcriber"
       />
     </>
   );

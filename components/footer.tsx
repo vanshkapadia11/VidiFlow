@@ -153,7 +153,7 @@ export default function CreatorFooter() {
           </div>
 
           {/* Links columns */}
-          <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-10">
+          <div className="md:col-span-3 grid grid-cols-4 sm:grid-cols-4 gap-10">
             {/* Creator Tools */}
             <div className="space-y-5">
               <div>
@@ -331,6 +331,45 @@ export default function CreatorFooter() {
                       </span>
                       {item.label}
                       {item.soon && <ComingSoonBadge />}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-0.5">
+                  Category
+                </p>
+                <h5 className="text-[11px] font-black text-white uppercase tracking-[0.15em]">
+                  Batch Downloaders
+                </h5>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  {
+                    href: "/reddit-batch-downloader",
+                    icon: <VideoIcon className="h-3.5 w-3.5 text-blue-400" />,
+                    label: "Reddit Batch DL",
+                  },
+                  {
+                    href: "/pinterest-batch-downloader",
+                    icon: (
+                      <CameraIcon className="h-3.5 w-3.5 text-yellow-400" />
+                    ),
+                    label: "Pinterest Batch DL",
+                  },
+                ].map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2 text-sm font-bold text-zinc-400 hover:text-white transition-colors group"
+                    >
+                      <span className="opacity-70 group-hover:opacity-100 transition-opacity">
+                        {item.icon}
+                      </span>
+                      {item.label}
                     </Link>
                   </li>
                 ))}
