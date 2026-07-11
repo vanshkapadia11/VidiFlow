@@ -49,6 +49,7 @@ export default function VideoSubtitlesPage() {
         steps={videoSubtitlesContent.steps}
         features={videoSubtitlesContent.features}
         faqs={videoSubtitlesContent.faqs}
+        currentPath="/video-subtitles"
       />
     </>
   );
