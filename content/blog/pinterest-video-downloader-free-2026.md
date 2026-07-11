@@ -106,4 +106,4 @@ Yes. Videos and images are downloaded in their original resolution.
 
 ---
 
-Start downloading now at **[vidiflow.co/pinterest-downloader](/pinterest-downloader)** 📌
+Start downloading now at **[vidiflow.co/pinterest-downloader](/pinterest-video-downloader)** 📌

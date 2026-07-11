@@ -118,4 +118,4 @@ Yes, any public YouTube video thumbnail can be downloaded.
 
 ---
 
-Start downloading thumbnails now at **[vidiflow.co/yt-thumbnail-downloader](/yt-thumbnail-downloader)** 🖼️
+Start downloading thumbnails now at **[vidiflow.co/yt-thumbnail-downloader](/youtube-thumbnail-downloader)** 🖼️

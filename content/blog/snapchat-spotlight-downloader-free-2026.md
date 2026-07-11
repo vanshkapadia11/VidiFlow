@@ -108,4 +108,4 @@ No watermark is added by VidiFlow.
 
 ---
 
-Start downloading now at **[vidiflow.co/snapchat-downloader](/snapchat-downloader)** 👻
+Start downloading now at **[vidiflow.co/snapchat-downloader](/snapchat-video-downloader)** 👻

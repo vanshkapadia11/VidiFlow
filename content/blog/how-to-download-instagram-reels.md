@@ -102,4 +102,4 @@ Downloading for personal use is generally fine. Do not repost or use content com
 
 ---
 
-Ready to try it? **[Download Instagram Reels free →](/instagram-downloader)**
+Ready to try it? **[Download Instagram Reels free →](/instagram-video-downloader)**

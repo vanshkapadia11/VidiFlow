@@ -30,23 +30,9 @@ const toolCategories = [
     icon: <VideoIcon className="h-5 w-5 text-red-600" />,
     color: "red",
     tools: [
-      {
-        name: "Video Downloader",
-        href: "/youtube-video-downloader",
-        status: "Soon",
-        icon: <VideoIcon className="h-4 w-4" />,
-      },
-      {
-        name: "Audio Extractor",
-        href: "/youtube-audio-downloader",
-        status: "Soon",
-        icon: <MusicIcon className="h-4 w-4" />,
-      },
-      {
-        name: "Thumbnail Grabber",
-        href: "/youtube-thumbnail-downloader",
-        icon: <ImageIcon className="h-4 w-4" />,
-      },
+      { name: "Video Downloader", href: "/youtube-video-downloader", status: "Soon", icon: <VideoIcon className="h-4 w-4" /> },
+      { name: "Audio Extractor", href: "/youtube-audio-downloader", status: "Soon", icon: <MusicIcon className="h-4 w-4" /> },
+      { name: "Thumbnail Grabber", href: "/youtube-thumbnail-downloader", icon: <ImageIcon className="h-4 w-4" /> },
     ],
   },
   {
@@ -54,22 +40,21 @@ const toolCategories = [
     icon: <CameraIcon className="h-5 w-5 text-pink-500" />,
     color: "pink",
     tools: [
-      {
-        name: "Instagram DL",
-        href: "/instagram-video-downloader",
-        status: "Soon",
-        icon: <CameraIcon className="h-4 w-4" />,
-      },
-      {
-        name: "TikTok DL",
-        href: "/tiktok-video-downloader",
-        icon: <DownloadIcon className="h-4 w-4" />,
-      },
-      {
-        name: "Pinterest DL",
-        href: "/pinterest-video-downloader",
-        icon: <DownloadIcon className="h-4 w-4" />,
-      },
+      { name: "Instagram DL", href: "/instagram-video-downloader", status: "Soon", icon: <CameraIcon className="h-4 w-4" /> },
+      { name: "TikTok DL", href: "/tiktok-video-downloader", icon: <DownloadIcon className="h-4 w-4" /> },
+      { name: "Pinterest DL", href: "/pinterest-video-downloader", icon: <DownloadIcon className="h-4 w-4" /> },
+      { name: "Facebook DL", href: "/facebook-video-downloader", icon: <VideoIcon className="h-4 w-4" /> },
+    ],
+  },
+  {
+    title: "More Downloaders",
+    icon: <DownloadIcon className="h-5 w-5 text-orange-500" />,
+    color: "orange",
+    tools: [
+      { name: "Snapchat DL", href: "/snapchat-video-downloader", icon: <CameraIcon className="h-4 w-4" /> },
+      { name: "Twitter / X DL", href: "/twitter-video-downloader", icon: <VideoIcon className="h-4 w-4" /> },
+      { name: "Reddit DL", href: "/reddit-video-downloader", icon: <DownloadIcon className="h-4 w-4" /> },
+      { name: "Twitch DL", href: "/twitch-video-downloader", icon: <TvIcon className="h-4 w-4" /> },
     ],
   },
   {
@@ -77,28 +62,10 @@ const toolCategories = [
     icon: <ZapIcon className="h-5 w-5 text-amber-500" />,
     color: "amber",
     tools: [
-      {
-        name: "Tag Master",
-        href: "/generate-tags",
-        icon: <ZapIcon className="h-4 w-4" />,
-      },
-      {
-        name: "Desc Grabber",
-        href: "/generate-description",
-        icon: <SparklesIcon className="h-4 w-4" />,
-      },
-      {
-        name: "Video Transcriber",
-        href: "/video-transcriber",
-        icon: <FileTextIcon className="h-4 w-4" />,
-        status: "Pro",
-        paid: true,
-      },
-      {
-        name: "LinkedIn DL",
-        href: "/linkedin-downloader",
-        icon: <TvIcon className="h-4 w-4" />,
-      },
+      { name: "Tag Master", href: "/generate-tags", icon: <ZapIcon className="h-4 w-4" /> },
+      { name: "Desc Grabber", href: "/generate-description", icon: <SparklesIcon className="h-4 w-4" /> },
+      { name: "Video Transcriber", href: "/video-transcriber", icon: <FileTextIcon className="h-4 w-4" />, status: "Pro", paid: true },
+      { name: "LinkedIn DL", href: "/linkedin-video-downloader", icon: <TvIcon className="h-4 w-4" /> },
     ],
   },
 ];
@@ -222,7 +189,8 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6"> */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {toolCategories.map((cat, idx) => (
               <div key={idx} className="space-y-4">
                 {/* Category header */}

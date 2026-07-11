@@ -116,4 +116,4 @@ Yes. Works on iPhone and Android directly in the browser.
 
 ---
 
-Start downloading now at **[vidiflow.co/twitch-downloader](/twitch-downloader)** 🎮
+Start downloading now at **[vidiflow.co/twitch-downloader](/twitch-video-downloader)** 🎮

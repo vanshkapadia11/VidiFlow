@@ -1,12 +1,15 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   PlusIcon,
   MinusIcon,
   ZapIcon,
   CheckIcon,
   StarIcon,
+  ArrowUpRightIcon,
+  BookOpenIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CreatorFooter from "./footer";
@@ -32,6 +35,95 @@ interface PageContentProps {
   steps: Step[];
   features: Feature[];
   faqs: FAQ[];
+  currentPath: string;
+}
+
+// ── Related Tools Data ───────────────────────────────────────────────────────
+
+const allTools = [
+  { name: "YouTube Video Downloader", href: "/youtube-video-downloader" },
+  { name: "YouTube Audio Downloader", href: "/youtube-audio-downloader" },
+  {
+    name: "YouTube Thumbnail Downloader",
+    href: "/youtube-thumbnail-downloader",
+  },
+  { name: "TikTok Downloader", href: "/tiktok-video-downloader" },
+  { name: "Instagram Video Downloader", href: "/instagram-video-downloader" },
+  { name: "Facebook Video Downloader", href: "/facebook-video-downloader" },
+  { name: "Pinterest Video Downloader", href: "/pinterest-video-downloader" },
+  { name: "Snapchat Video Downloader", href: "/snapchat-video-downloader" },
+  { name: "Twitter Video Downloader", href: "/twitter-video-downloader" },
+  { name: "LinkedIn Video Downloader", href: "/linkedin-video-downloader" },
+  { name: "Twitch Video Downloader", href: "/twitch-video-downloader" },
+  { name: "Reddit Video Downloader", href: "/reddit-video-downloader" },
+];
+
+// ── Related Blog Posts Data ──────────────────────────────────────────────────
+
+const allBlogPosts = [
+  {
+    name: "Best Free Video Downloader for Every Platform",
+    href: "/blog/best-free-video-downloader-every-platform-2026",
+  },
+  {
+    name: "Facebook Video Downloader — Free Guide",
+    href: "/blog/facebook-video-downloader-free-2026",
+  },
+  {
+    name: "How to Convert YouTube to MP3 for Free",
+    href: "/blog/how-to-convert-youtube-to-mp3-free",
+  },
+  {
+    name: "How to Download Instagram Reels",
+    href: "/blog/how-to-download-instagram-reels",
+  },
+  {
+    name: "How to Download LinkedIn Videos",
+    href: "/blog/how-to-download-linkedin-videos",
+  },
+  {
+    name: "How to Download Reddit Videos for Free",
+    href: "/blog/how-to-download-reddit-videos-free",
+  },
+  {
+    name: "How to Download TikTok Videos Without Watermark",
+    href: "/blog/how-to-download-tiktok-videos-without-watermark",
+  },
+  {
+    name: "How to Download Twitter / X Videos for Free",
+    href: "/blog/how-to-download-twitter-x-videos-free",
+  },
+  {
+    name: "Pinterest Video Downloader — Free Guide",
+    href: "/blog/pinterest-video-downloader-free-2026",
+  },
+  {
+    name: "Snapchat Spotlight Downloader — Free Guide",
+    href: "/blog/snapchat-spotlight-downloader-free-2026",
+  },
+  {
+    name: "Twitch Clip Downloader — Free Guide",
+    href: "/blog/twitch-clip-downloader-free-2026",
+  },
+  {
+    name: "YouTube Thumbnail Downloader — Free Guide",
+    href: "/blog/youtube-thumbnail-downloader-free-2026",
+  },
+  {
+    name: "YouTube to MP3 Converter — Free Guide",
+    href: "/blog/youtube-to-mp3-converter-free-2026",
+  },
+];
+
+// ── Shuffle Helper ────────────────────────────────────────────────────────────
+
+function shuffle<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 }
 
 // ── FAQ Item ───────────────────────────────────────────────────────────────
@@ -104,6 +196,16 @@ function SectionHeader({
   );
 }
 
+// ── Skeleton Card ─────────────────────────────────────────────────────────
+
+function SkeletonCard({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`bg-zinc-50 border-2 border-zinc-100 rounded-2xl animate-pulse ${className}`}
+    />
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function PageContent({
@@ -111,7 +213,21 @@ export default function PageContent({
   steps,
   features,
   faqs,
+  currentPath,
 }: PageContentProps) {
+  const [relatedTools, setRelatedTools] = React.useState<typeof allTools>([]);
+  const [relatedPosts, setRelatedPosts] = React.useState<typeof allBlogPosts>(
+    [],
+  );
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    const toolPool = allTools.filter((tool) => tool.href !== currentPath);
+    setRelatedTools(shuffle(toolPool).slice(0, 7));
+    setRelatedPosts(shuffle(allBlogPosts).slice(0, 2));
+    setMounted(true);
+  }, [currentPath]);
+
   return (
     <>
       <div className="max-w-6xl mx-auto px-6 pb-24 mt-16 space-y-28">
@@ -136,12 +252,10 @@ export default function PageContent({
                 key={step.number}
                 className="group relative bg-white border-2 border-zinc-100 rounded-[28px] p-6 hover:border-red-500 hover:scale-[1.02] transition-all duration-200 overflow-hidden shadow-sm cursor-default"
               >
-                {/* Watermark */}
                 <span className="absolute -bottom-3 -right-1 text-[72px] font-black text-zinc-50 leading-none select-none group-hover:text-red-50 transition-colors">
                   {step.number}
                 </span>
 
-                {/* Top row */}
                 <div className="flex items-center justify-between mb-5">
                   <div className="inline-flex items-center gap-1.5 bg-zinc-950 text-white rounded-full px-3 py-1">
                     <ZapIcon className="h-2.5 w-2.5 text-red-500 fill-red-500" />
@@ -200,6 +314,65 @@ export default function PageContent({
             {faqs.map((faq, i) => (
               <FAQItem key={i} q={faq.q} a={faq.a} index={i} />
             ))}
+          </div>
+        </div>
+
+        {/* ── RELATED TOOLS ── */}
+        <div>
+          <SectionHeader
+            eyebrow="Explore More"
+            title="Related "
+            accent="Tools."
+          />
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {!mounted
+              ? Array.from({ length: 7 }).map((_, i) => (
+                  <SkeletonCard key={i} className="min-h-[100px]" />
+                ))
+              : relatedTools.map((tool) => (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    className="group bg-white border-2 border-zinc-100 rounded-2xl px-4 py-5 flex flex-col justify-between gap-3 hover:border-red-500 hover:scale-[1.02] transition-all duration-200 cursor-pointer shadow-sm relative overflow-hidden min-h-[100px]"
+                  >
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 text-zinc-300 group-hover:text-red-600 transition-colors absolute top-4 right-4" />
+                    <span className="text-xs font-black text-zinc-700 group-hover:text-zinc-900 uppercase tracking-tight leading-snug pr-4">
+                      {tool.name}
+                    </span>
+                  </Link>
+                ))}
+          </div>
+        </div>
+
+        {/* ── RELATED BLOG POSTS ── */}
+        <div>
+          <SectionHeader
+            eyebrow="Learn More"
+            title="Related "
+            accent="Guides."
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            {!mounted
+              ? Array.from({ length: 2 }).map((_, i) => (
+                  <SkeletonCard key={i} className="min-h-[76px]" />
+                ))
+              : relatedPosts.map((post) => (
+                  <Link
+                    key={post.href}
+                    href={post.href}
+                    className="group bg-white border-2 border-zinc-100 rounded-2xl px-5 py-5 flex items-start gap-4 hover:border-red-500 hover:scale-[1.02] transition-all duration-200 cursor-pointer shadow-sm relative overflow-hidden"
+                  >
+                    <div className="shrink-0 w-9 h-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-400 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 transition-all duration-200">
+                      <BookOpenIcon className="h-4 w-4" />
+                    </div>
+                    <span className="text-xs font-black text-zinc-700 group-hover:text-zinc-900 uppercase tracking-tight leading-snug pt-2">
+                      {post.name}
+                    </span>
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 text-zinc-300 group-hover:text-red-600 transition-colors absolute top-4 right-4" />
+                  </Link>
+                ))}
           </div>
         </div>
       </div>

@@ -1,178 +1,202 @@
 // app/sitemap.ts
-// Place this file at: app/sitemap.ts
-// Accessible at: vidiflow,co/sitemap.xml (Next.js handles this automatically)
-
 import { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://www.vidiflow.co";
-  const lastModified = new Date();
+const baseUrl = "https://www.vidiflow.co";
 
+// Update a page's date here ONLY when you actually change that page's content.
+// Format: new Date("YYYY-MM-DD")
+const lastMod = {
+  homepage: new Date("2026-07-01"),
+
+  tiktok: new Date("2026-07-01"),
+  youtubeVideo: new Date("2026-07-01"),
+  youtubeAudio: new Date("2026-07-01"),
+  youtubeThumbnail: new Date("2026-07-01"),
+  instagram: new Date("2026-07-01"),
+  facebook: new Date("2026-07-01"),
+  pinterest: new Date("2026-07-11"), // bumped: added new FAQ content today
+  snapchat: new Date("2026-07-01"),
+  twitter: new Date("2026-07-01"),
+  linkedin: new Date("2026-07-01"),
+  twitch: new Date("2026-07-01"),
+  reddit: new Date("2026-07-01"),
+
+  generateTags: new Date("2026-07-01"),
+  generateDescription: new Date("2026-07-01"),
+
+  exploreTools: new Date("2026-07-01"),
+  blogIndex: new Date("2026-07-01"),
+  about: new Date("2026-06-01"),
+  privacy: new Date("2026-06-01"),
+
+  blogYtMp3: new Date("2025-12-01"),
+  blogPinterest: new Date("2025-12-01"),
+  blogFacebook: new Date("2025-12-01"),
+  blogSnapchat: new Date("2025-12-01"),
+  blogTwitch: new Date("2025-12-01"),
+  blogYtThumbnail: new Date("2025-12-01"),
+  blogBestFree: new Date("2025-12-01"),
+};
+
+export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    // ── HOMEPAGE ─────────────────────────────────────────────────────────────
     {
       url: baseUrl,
-      lastModified,
+      lastModified: lastMod.homepage,
       changeFrequency: "weekly",
       priority: 1.0,
     },
 
-    // ── VIDEO DOWNLOADERS ─────────────────────────────────────────────────────
     {
       url: `${baseUrl}/tiktok-video-downloader`,
-      lastModified,
+      lastModified: lastMod.tiktok,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/youtube-video-downloader`,
-      lastModified,
+      lastModified: lastMod.youtubeVideo,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/youtube-audio-downloader`,
-      lastModified,
+      lastModified: lastMod.youtubeAudio,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/youtube-thumbnail-downloader`,
-      lastModified,
+      lastModified: lastMod.youtubeThumbnail,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/instagram-video-downloader`,
-      lastModified,
+      lastModified: lastMod.instagram,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/facebook-video-downloader`,
-      lastModified,
+      lastModified: lastMod.facebook,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/pinterest-video-downloader`,
-      lastModified,
+      lastModified: lastMod.pinterest,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/snapchat-video-downloader`,
-      lastModified,
+      lastModified: lastMod.snapchat,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/twitter-video-downloader`,
-      lastModified,
+      lastModified: lastMod.twitter,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/linkedin-video-downloader`,
-      lastModified,
+      lastModified: lastMod.linkedin,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/twitch-video-downloader`,
-      lastModified,
+      lastModified: lastMod.twitch,
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/reddit-video-downloader`,
+      lastModified: lastMod.reddit,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
 
-    // ── CREATOR TOOLS ─────────────────────────────────────────────────────────
     {
       url: `${baseUrl}/generate-tags`,
-      lastModified,
+      lastModified: lastMod.generateTags,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/generate-description`,
-      lastModified,
+      lastModified: lastMod.generateDescription,
       changeFrequency: "weekly",
       priority: 0.8,
     },
 
-    // ── OTHER PAGES ───────────────────────────────────────────────────────────
     {
       url: `${baseUrl}/explore-tools`,
-      lastModified,
+      lastModified: lastMod.exploreTools,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified,
+      lastModified: lastMod.blogIndex,
       changeFrequency: "daily",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/reddit-video-downloader`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-
-    // ── LEGAL / INFO PAGES ──────────────────────────────────────────────────
-    {
       url: `${baseUrl}/about`,
-      lastModified,
+      lastModified: lastMod.about,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/privacy-policy`,
-      lastModified,
+      lastModified: lastMod.privacy,
       changeFrequency: "monthly",
       priority: 0.5,
     },
 
-    // ── BLOGS ─────────────────────────────────────────────────────────────────
     {
       url: `${baseUrl}/blog/youtube-to-mp3-converter-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogYtMp3,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/pinterest-video-downloader-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogPinterest,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/facebook-video-downloader-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogFacebook,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/snapchat-spotlight-downloader-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogSnapchat,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/twitch-clip-downloader-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogTwitch,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/youtube-thumbnail-downloader-free-2025`,
-      lastModified,
+      lastModified: lastMod.blogYtThumbnail,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog/best-free-video-downloader-every-platform-2025`,
-      lastModified,
+      lastModified: lastMod.blogBestFree,
       changeFrequency: "monthly",
       priority: 0.7,
     },
