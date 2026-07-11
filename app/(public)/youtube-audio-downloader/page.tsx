@@ -1,0 +1,55 @@
+import React from "react";
+import { Metadata } from "next";
+import PageContent from "@/components/pageContent";
+import YouTubeAudioDownloader from "./YoutubeAudioDownloader";
+import YouTubeAudioWaitlist from "./YoutubeAudioWaitlist";
+import { youtubeAudioContent } from "@/lib/page-content";
+
+export const metadata: Metadata = {
+  title: "YouTube to MP3 Converter — Download YouTube Audio Free",
+  description:
+    "Convert YouTube videos to MP3 audio for free. Download YouTube audio in 320kbps, 256kbps and 128kbps quality. Fast, free, works on all devices. No app needed.",
+  keywords: [
+    "youtube to mp3",
+    "youtube mp3 converter",
+    "youtube audio downloader",
+    "download youtube audio",
+    "convert youtube to mp3 free",
+    "youtube to mp3 320kbps",
+    "youtube music downloader",
+    "youtube mp3 download",
+  ],
+  alternates: {
+    canonical: "https://www.vidiflow.co/youtube-audio-downloader",
+  },
+  openGraph: {
+    title: "YouTube to MP3 Converter — Free Audio Download",
+    description:
+      "Convert any YouTube video to MP3 instantly. Up to 320kbps quality, free forever.",
+    url: "https://www.vidiflow.co/youtube-audio-downloader",
+  },
+  twitter: {
+    title: "YouTube to MP3 — Free Converter",
+    description: "Convert YouTube to MP3 free. Up to 320kbps quality.",
+  },
+};
+
+const isEnabled = process.env.NEXT_PUBLIC_AUDIO_ENABLED === "true";
+
+const YoutubeAudioDownloadPage = () => {
+  return (
+    <>
+      <main>
+        {isEnabled ? <YouTubeAudioDownloader /> : <YouTubeAudioWaitlist />}
+      </main>
+      <PageContent
+        description={youtubeAudioContent.description}
+        steps={youtubeAudioContent.steps}
+        features={youtubeAudioContent.features}
+        faqs={youtubeAudioContent.faqs}
+      />
+    </>
+  );
+};
+
+export default YoutubeAudioDownloadPage;

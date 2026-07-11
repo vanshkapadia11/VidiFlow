@@ -1,0 +1,82 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files
+.env*
+.env.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Android / Bubblewrap — ignore everything except keystore
+/android/
+/.gradle/
+/gradle/
+app/build/
+app/src/
+build/
+*.apk
+*.aab
+gradlew
+gradlew.bat
+gradle.properties
+build.gradle
+settings.gradle
+app-release-signed.apk
+app-release-signed.apk.idsig
+app-release-unsigned-aligned.apk
+app-release-bundle.aab
+app-release-unsigned.apk
+manifest-checksum.txt
+twa-manifest.json
+app/build.gradle
+store_icon.png
+
+android.keystore
+app/build.gradle
+/android/
+/.gradle/
+/gradle/
+gradlew
+gradlew.bat
+gradle.properties
+build.gradle
+settings.gradle
+*.aab
+*.apk
+*.idsig
+twa-manifest.json
+manifest-checksum.txt
+store_icon.png
+/lib/generated/prisma
