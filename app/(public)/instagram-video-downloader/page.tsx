@@ -47,6 +47,7 @@ const InstaVideoDownloaderPage = () => {
         steps={instagramContent.steps}
         features={instagramContent.features}
         faqs={instagramContent.faqs}
+        currentPath="/instagram-video-downloader"
       />
     </>
   );

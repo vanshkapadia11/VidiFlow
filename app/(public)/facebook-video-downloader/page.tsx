@@ -46,6 +46,7 @@ const FacebookVideoDownloaderPage = () => {
         steps={facebookContent.steps}
         features={facebookContent.features}
         faqs={facebookContent.faqs}
+        currentPath="/facebook-video-downloader"
       />
     </>
   );

@@ -47,6 +47,7 @@ const YoutubeDownloaderPage = () => {
         steps={youtubeVideoContent.steps}
         features={youtubeVideoContent.features}
         faqs={youtubeVideoContent.faqs}
+        currentPath="/youtube-video-downloader"
       />
     </>
   );

@@ -44,6 +44,7 @@ const TikTokDownloaderPage = () => {
         steps={tiktokContent.steps}
         features={tiktokContent.features}
         faqs={tiktokContent.faqs}
+        currentPath="/tiktok-video-downloader"
       />
       {/* <CreatorFooter /> */}
     </>

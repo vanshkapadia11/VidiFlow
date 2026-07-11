@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 type GenMode = "video" | "channel";
 
@@ -88,7 +89,15 @@ export default function CreatorArchitect() {
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-50 font-sans text-sm">
       <Navbar />
-
+      <Breadcrumbs
+        items={[
+          { name: "Downloaders", href: "/explore-tools" },
+          {
+            name: "Generate Description",
+            href: "/generate-description",
+          },
+        ]}
+      />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
         {/* MINIMAL HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">

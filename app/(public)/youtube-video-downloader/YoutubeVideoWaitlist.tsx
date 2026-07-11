@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/navbar";
 import CreatorFooter from "@/components/footer";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 const FEATURES = [
   "Download up to 4K / 1080p / 720p",
@@ -59,6 +60,15 @@ export default function YouTubeVideoWaitlist() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          { name: "Downloaders", href: "/explore-tools" },
+          {
+            name: "YouTube Video Downloader",
+            href: "/youtube-video-downloader",
+          },
+        ]}
+      />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">

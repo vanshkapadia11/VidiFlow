@@ -45,6 +45,7 @@ const SnapchatVideoDownloaderPage = () => {
         steps={snapchatContent.steps}
         features={snapchatContent.features}
         faqs={snapchatContent.faqs}
+        currentPath="/snapchat-video-downloader"
       />
     </>
   );

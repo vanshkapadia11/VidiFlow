@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/navbar";
 import CreatorFooter from "@/components/footer";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 interface VideoInfo {
   title: string;
@@ -167,6 +168,15 @@ export default function YouTubeAudioDownloader() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
+      <Breadcrumbs
+                    items={[
+                      { name: "Downloaders", href: "/explore-tools" },
+                      {
+                        name: "YouTube Audio Downloader",
+                        href: "/youtube-audio-downloader",
+                      },
+                    ]}
+                  />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
         {/* ── HEADER ── */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">

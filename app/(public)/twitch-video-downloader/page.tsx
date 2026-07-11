@@ -46,6 +46,7 @@ const TwitchVideoDownloaderPage = () => {
         steps={twitchContent.steps}
         features={twitchContent.features}
         faqs={twitchContent.faqs}
+        currentPath="/twitch-video-downloader"
       />
     </>
   );

@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import CreatorFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 import PageContent from "@/components/pageContent";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 interface PinterestResult {
   mediaUrl: string;
@@ -92,6 +93,15 @@ export default function PinterestDownloader() {
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-50 font-sans text-zinc-900">
       <Navbar />
+      <Breadcrumbs
+              items={[
+                { name: "Downloaders", href: "/explore-tools" },
+                {
+                  name: "Pinterest Video Downloader",
+                  href: "/pinterest-video-downloader",
+                },
+              ]}
+            />
       <main className="max-w-6xl mx-auto p-6 lg:py-12 antialiased">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>

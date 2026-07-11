@@ -47,6 +47,7 @@ const YoutubeAudioDownloadPage = () => {
         steps={youtubeAudioContent.steps}
         features={youtubeAudioContent.features}
         faqs={youtubeAudioContent.faqs}
+        currentPath="/youtube-audio-downloader"
       />
     </>
   );

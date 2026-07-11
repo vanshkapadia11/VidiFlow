@@ -1,6 +1,5 @@
 import React from "react";
 import PinterestDownloader from "./Downloader";
-import CreatorFooter from "@/components/footer";
 import { Metadata } from "next";
 import PageContent from "@/components/pageContent";
 import { pinterestContent } from "@/lib/page-content";
@@ -35,8 +34,43 @@ export const metadata: Metadata = {
 };
 
 const PinterestDownloaderPage = () => {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: pinterestContent.faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
+    })),
+  };
+
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Pinterest Video Downloader — VidiFlow",
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    url: "https://www.vidiflow.co/pinterest-video-downloader",
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <main>
         <PinterestDownloader />
       </main>
@@ -45,6 +79,7 @@ const PinterestDownloaderPage = () => {
         steps={pinterestContent.steps}
         features={pinterestContent.features}
         faqs={pinterestContent.faqs}
+        currentPath="/pinterest-video-downloader"
       />
     </>
   );

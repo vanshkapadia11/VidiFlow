@@ -45,6 +45,7 @@ const YoutubeThumbnailDownloader = () => {
         steps={youtubeThumbnailContent.steps}
         features={youtubeThumbnailContent.features}
         faqs={youtubeThumbnailContent.faqs}
+        currentPath="/youtube-thumbnail-downloader"
       />
     </>
   );

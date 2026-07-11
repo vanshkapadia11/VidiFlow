@@ -47,6 +47,7 @@ const GenerateDescPage = () => {
         steps={creatorArchitectContent.steps}
         features={creatorArchitectContent.features}
         faqs={creatorArchitectContent.faqs}
+        currentPath="/generate-description"
       />
     </>
   );

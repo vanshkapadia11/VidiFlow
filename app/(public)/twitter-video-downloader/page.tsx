@@ -47,6 +47,7 @@ const TwitterVideoDownloaderPage = () => {
         steps={twitterContent.steps}
         features={twitterContent.features}
         faqs={twitterContent.faqs}
+        currentPath="/twitter-video-downloader"
       />
     </>
   );

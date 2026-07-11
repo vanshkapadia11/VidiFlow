@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/navbar";
 import CreatorFooter from "@/components/footer";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 const categories = [
   { id: "all", label: "All Tools" },
@@ -118,7 +119,7 @@ const allFeatures = [
     icon: <BriefcaseIcon className="h-5 w-5 text-blue-700" />,
     category: "social",
     status: "Live",
-    href: "/linkedin-downloader",
+    href: "/linkedin-video-downloader",
     color: "bg-blue-50",
   },
   {
@@ -129,6 +130,42 @@ const allFeatures = [
     status: "Live",
     href: "/twitch-video-downloader",
     color: "bg-purple-50",
+  },
+  {
+    title: "Facebook DL",
+    desc: "Save Facebook videos and Reels in original quality.",
+    icon: <VideoIcon className="h-5 w-5 text-blue-600" />,
+    category: "social",
+    status: "Live",
+    href: "/facebook-video-downloader",
+    color: "bg-blue-50",
+  },
+  {
+    title: "Snapchat DL",
+    desc: "Download public Snapchat Spotlight videos free.",
+    icon: <CameraIcon className="h-5 w-5 text-yellow-500" />,
+    category: "social",
+    status: "Live",
+    href: "/snapchat-video-downloader",
+    color: "bg-yellow-50",
+  },
+  {
+    title: "Twitter / X DL",
+    desc: "Save tweets, GIFs, and video clips instantly.",
+    icon: <VideoIcon className="h-5 w-5 text-zinc-800" />,
+    category: "social",
+    status: "Live",
+    href: "/twitter-video-downloader",
+    color: "bg-zinc-100",
+  },
+  {
+    title: "Reddit DL",
+    desc: "Download Reddit videos and GIFs without login.",
+    icon: <DownloadIcon className="h-5 w-5 text-orange-500" />,
+    category: "social",
+    status: "Live",
+    href: "/reddit-video-downloader",
+    color: "bg-orange-50",
   },
 ];
 
@@ -151,6 +188,11 @@ export default function ExploreFeatures() {
       <main className="antialiased">
         {/* ─── HERO ─────────────────────────────────────────────────── */}
         <section className="relative pt-16 pb-20 px-6 overflow-hidden">
+         <div className="mb-10">
+           <Breadcrumbs
+            items={[{ name: "Explore Features", href: "/explore-tools" }]}
+          />
+         </div>
           {/* Background blobs — identical to homepage hero */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-red-100/40 blur-[140px] rounded-full -z-0 pointer-events-none" />
           <div className="absolute top-20 right-0 w-[300px] h-[300px] bg-amber-100/30 blur-[100px] rounded-full -z-0 pointer-events-none" />

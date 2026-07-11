@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Navbar from "@/components/navbar";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Top Results": <TrendingUpIcon className="h-3 w-3" />,
@@ -95,7 +96,15 @@ export default function EnhancedTagGenerator() {
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-100 font-sans text-zinc-900">
       <Navbar />
-
+<Breadcrumbs
+                    items={[
+                      { name: "Downloaders", href: "/explore-tools" },
+                      {
+                        name: "Generate Tags",
+                        href: "/generate-tags",
+                      },
+                    ]}
+                  />
       <main className="max-w-6xl mx-auto p-6 lg:py-16 antialiased">
         {/* HERO HEADER */}
         <div className="flex flex-col items-center text-center mb-12">

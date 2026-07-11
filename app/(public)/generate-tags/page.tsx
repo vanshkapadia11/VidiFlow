@@ -48,6 +48,7 @@ const YoutubeTagsPage = () => {
         steps={tagGeneratorContent.steps}
         features={tagGeneratorContent.features}
         faqs={tagGeneratorContent.faqs}
+        currentPath="/generate-tags"
       />
     </>
   );

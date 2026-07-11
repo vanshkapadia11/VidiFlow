@@ -13,6 +13,7 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
 } from "lucide-react";
+// import Breadcrumbs from "@/components/breadcrumbs";
 
 // Generate static paths for all blog posts
 export async function generateStaticParams() {
@@ -69,7 +70,6 @@ export default async function BlogPostPage({
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
-
       <main className="max-w-4xl mx-auto px-6 py-12 lg:py-16">
         {/* BACK BUTTON */}
         <Link

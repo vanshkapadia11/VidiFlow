@@ -232,7 +232,7 @@ export default function PageContent({
     <>
       <div className="max-w-6xl mx-auto px-6 pb-24 mt-16 space-y-28">
         {/* ── DESCRIPTION ── */}
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="mx-auto text-center">
           <p className="text-zinc-500 font-medium text-md italic leading-loose">
             {description}
           </p>

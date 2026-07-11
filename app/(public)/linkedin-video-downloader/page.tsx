@@ -45,6 +45,7 @@ const LinkedinDownloaderPage = () => {
         steps={linkedinContent.steps}
         features={linkedinContent.features}
         faqs={linkedinContent.faqs}
+        currentPath="/linkedin-video-downloader"
       />
       {/* <CreatorFooter /> */}
     </>

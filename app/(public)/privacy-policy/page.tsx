@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import CreatorFooter from "@/components/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShieldCheckIcon } from "lucide-react";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — VidiFlow",
@@ -94,6 +95,14 @@ const PrivacyPolicyPage = () => {
   return (
     <div className="min-h-screen bg-[#fafafa] selection:bg-red-50 font-sans text-zinc-900">
       <Navbar />
+      <Breadcrumbs
+        items={[
+          {
+            name: "Privacy Policy",
+            href: "/privacy-policy",
+          },
+        ]}
+      />
       <main className="max-w-4xl mx-auto p-6 lg:py-12 antialiased">
         {/* Header */}
         <div className="mb-10">

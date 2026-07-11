@@ -14,6 +14,7 @@ import {
   SparklesIcon,
 } from "lucide-react";
 import { getAllPosts } from "@/lib/blog";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Blog — Video Downloading Tips, Guides & Tutorials | VidiFlow",
@@ -46,7 +47,14 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] font-sans text-zinc-900">
       <Navbar />
-
+      <Breadcrumbs
+        items={[
+          {
+            name: "Blogs",
+            href: "/blog",
+          },
+        ]}
+      />
       <main className="max-w-6xl mx-auto px-6 py-12 lg:py-16">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-4">
